@@ -1,0 +1,4544 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ShieldPay</title>
+
+  <style>
+    /* =========================================================
+       1. BẢNG MÀU (phối từ 2 palette)
+       Palette 1: #F2E6EE #FFCCF2 #977DFF #0033FF #0600AB #00033D
+       Palette 2: #AED5F5 #367ADF #4FACE5 #394988 #353A4C
+       ========================================================= */
+    :root {
+      /* Palette: Space Cadet, UCLA Blue, Pink Lavender, Cyan Azure, Air Superiority Blue,
+         Violet Bloom, Cornflower Blue, Petal White, Marigold, Primrose + tông pastel xanh lá */
+      --navy:    #102B53;
+      --deep:    #0B2142;
+      --blue:    #5E84E2;
+      --violet:  #8B6EC7;
+      --pink:    #CEB5D4;
+      --cream:   #F5F4ED;
+      --icy:     #E0E4E7;
+      --azure:   #4E7AB1;
+      --sky:     #7D9FC0;
+      --french:  #50698D;
+      --charcoal:#0B2142;
+      --marigold:#F6A93A;
+      --primrose:#F7EC8D;
+      --mauve:   #CB96BA;
+
+      /* Chữ: sáng hơn nhiều so với nền để dễ đọc */
+      --text:    #F5F4ED;
+      --muted:   #C5D3E8;
+      --line:    rgba(125, 159, 192, 0.40);
+      --card:    rgba(80, 105, 141, 0.32);
+
+      --ok:      #8FD3B0;
+      --warn:    #F6A93A;
+      --bad:     #FF8F8F;
+    }
+
+    /* =========================================================
+       2. NỀN TẢNG
+       ========================================================= */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.55;
+      color: var(--text);
+      background:
+        radial-gradient(900px 520px at 85% -10%, rgba(139, 110, 199, 0.40), transparent),
+        radial-gradient(800px 480px at 0% 5%, rgba(94, 132, 226, 0.32), transparent),
+        var(--navy);
+    }
+
+    a {
+      color: var(--primrose);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .wrap {
+      max-width: 1040px;
+      margin: auto;
+      padding: 0 20px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    /* =========================================================
+       3. THANH MENU
+       ========================================================= */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .brand svg {
+      width: 36px;
+      height: 36px;
+    }
+
+    .menu a {
+      margin-right: 18px;
+      padding-bottom: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .menu a.on {
+      color: var(--text);
+      border-bottom: 2px solid var(--marigold);
+    }
+
+    /* =========================================================
+       4. TRANG (mỗi trang là một <main class="page">)
+       ========================================================= */
+    .page {
+      display: none;
+      padding-bottom: 20px;
+    }
+
+    .page.on {
+      display: block;
+    }
+
+    h2 {
+      margin: 40px 0 8px;
+      font-size: clamp(26px, 4vw, 34px);
+      line-height: 1.2;
+      font-weight: 800;
+    }
+
+    h2::after {
+      content: "";
+      display: block;
+      width: 56px;
+      height: 4px;
+      margin-top: 10px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--marigold), var(--pink), var(--sky));
+    }
+
+    /* =========================================================
+       5. TRANG CHỦ: HERO (chữ nổi bật)
+       ========================================================= */
+    .hero {
+      padding: 44px 0 26px;
+      text-align: center;
+    }
+
+    .hero-logo svg {
+      width: 104px;
+      height: 104px;
+      filter: drop-shadow(0 0 26px rgba(94, 132, 226, 0.55));
+    }
+
+    .kicker {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 6px 16px;
+      border: 1px solid var(--violet);
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--icy);
+      background: rgba(151, 125, 255, 0.14);
+    }
+
+    .hero h1 {
+      margin: 18px 0 14px;
+      font-size: clamp(34px, 7vw, 66px);
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .hl {
+      background: linear-gradient(90deg, var(--primrose), var(--pink) 55%, var(--sky));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 22px rgba(151, 125, 255, 0.45));
+    }
+
+    .lead {
+      max-width: 700px;
+      margin: auto;
+      font-size: clamp(17px, 2.4vw, 21px);
+      color: var(--text);
+    }
+
+    .lead b {
+      color: var(--pink);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+      margin-top: 30px;
+    }
+
+    .stat {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--card);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 34px;
+      font-weight: 900;
+      color: var(--icy);
+    }
+
+    .stat span {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* =========================================================
+       6. NÚT BẤM
+       ========================================================= */
+    .btn {
+      display: inline-block;
+      margin: 20px 5px 0;
+      padding: 13px 24px;
+      border: 0;
+      border-radius: 12px;
+      font: 700 16px inherit;
+      color: var(--navy);
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--marigold), var(--primrose));
+      box-shadow: 0 8px 24px rgba(246, 169, 58, 0.30);
+    }
+
+    .btn.ghost {
+      color: var(--text);
+      background: none;
+      border: 1px solid var(--pink);
+      box-shadow: none;
+    }
+
+    /* =========================================================
+       7. THẺ VÀ LƯỚI
+       ========================================================= */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--card);
+    }
+
+    .card b {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .card span,
+    .card small {
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    .badge {
+      display: inline-grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      font-weight: 800;
+      color: var(--navy);
+      background: linear-gradient(135deg, var(--marigold), var(--primrose));
+    }
+
+    /* =========================================================
+       8. FORM
+       ========================================================= */
+    label {
+      display: block;
+      margin: 10px 0 4px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--icy);
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font: 14px inherit;
+      color: var(--text);
+      background: rgba(11, 33, 66, 0.78);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* =========================================================
+       9. TRANG GIAO DỊCH
+       ========================================================= */
+    .steps {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      padding-bottom: 10px;
+      overflow-x: auto;
+    }
+
+    .steps button {
+      padding: 9px 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font: 700 13px inherit;
+      white-space: nowrap;
+      color: var(--muted);
+      background: var(--card);
+      cursor: pointer;
+    }
+
+    .steps button.on {
+      color: var(--navy);
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--marigold), var(--primrose));
+    }
+
+    .step {
+      display: none;
+    }
+
+    .step.on {
+      display: block;
+    }
+
+    .step-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 14px;
+    }
+
+    .score {
+      font-size: 46px;
+      font-weight: 900;
+      color: var(--icy);
+    }
+
+    .bar {
+      height: 10px;
+      margin: 8px 0 12px;
+      border-radius: 9px;
+      overflow: hidden;
+      background: rgba(11, 33, 66, 0.78);
+    }
+
+    .bar div {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--ok), var(--warn), var(--bad));
+      transition: width 1s;
+    }
+
+    .flag {
+      display: flex;
+      gap: 10px;
+      padding: 9px 0;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+    }
+
+    .dot {
+      flex: none;
+      width: 10px;
+      height: 10px;
+      margin-top: 6px;
+      border-radius: 50%;
+    }
+
+    .dot.bad  { background: var(--bad); }
+    .dot.warn { background: var(--warn); }
+    .dot.ok   { background: var(--ok); }
+
+    .timeline {
+      margin: 12px 0 0 6px;
+      padding-left: 16px;
+      border-left: 2px solid var(--line);
+    }
+
+    .timeline div {
+      position: relative;
+      padding-bottom: 12px;
+      font-size: 14px;
+    }
+
+    .timeline div::before {
+      content: "";
+      position: absolute;
+      left: -23px;
+      top: 6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--sky);
+    }
+
+    .timeline small {
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 9px 6px;
+      text-align: left;
+      border-top: 1px solid var(--line);
+    }
+
+    th {
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .check label {
+      display: flex;
+      gap: 10px;
+      margin: 0;
+      padding: 9px 0;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .check input {
+      width: auto;
+    }
+
+    .note {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* =========================================================
+       10. ĐĂNG NHẬP / ĐĂNG KÝ
+       ========================================================= */
+    .auth {
+      max-width: 430px;
+      margin: 40px auto;
+    }
+
+    /* ---- Trang Giao dịch: luồng từng bước ---- */
+    .steps button.done {
+      color: var(--icy);
+      border-color: var(--sky);
+    }
+
+    .steps button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .opts-col label {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin: 0;
+      padding: 9px 0;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .opts-col input {
+      width: auto;
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .kv .card {
+      padding: 14px;
+    }
+
+    .kv .score {
+      font-size: 30px;
+    }
+
+    .tips {
+      margin: 6px 0 0 18px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .summary {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    /* ---- Chừa chỗ cho tai thỏ / thanh hệ thống trên điện thoại ---- */
+    :root {
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html {
+      scroll-padding-top: env(safe-area-inset-top, 0px);
+    }
+
+    /* ---- Ô nhập dễ nhìn hơn ---- */
+    ::placeholder {
+      color: rgba(224, 228, 231, 0.62);
+    }
+
+    option {
+      color: #102B53;
+      background: #F5F4ED;
+    }
+
+    .brand .pay {
+      color: var(--marigold);
+    }
+
+    /* ---- Khung dữ liệu mẫu ở bước 1 ---- */
+    .sample {
+      margin-bottom: 14px;
+    }
+
+    .sample summary {
+      cursor: pointer;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--primrose);
+    }
+
+    .sample table {
+      min-width: 560px;
+    }
+
+    .sample .btn.small {
+      padding: 6px 12px;
+    }
+
+    .pager {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* =========================================================
+       TRỢ LÝ SHIELDY
+       ========================================================= */
+    .bot {
+      position: fixed;
+      right: 14px;
+      bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .bot-launch {
+      position: relative;
+      padding: 0 4px 10px;
+      border: 0;
+      background: none;
+      cursor: pointer;
+    }
+
+    .bot-launch::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 4px;
+      width: 62px;
+      height: 10px;
+      margin-left: -31px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.35);
+      filter: blur(3px);
+      animation: botShadow 3.4s ease-in-out infinite;
+    }
+
+    .mascot-wrap {
+      position: relative;
+      display: block;
+      width: 92px;
+      transform-origin: 50% 92%;
+      animation: botFloat 3.4s ease-in-out infinite;
+    }
+
+    .bot-launch:hover .mascot-wrap {
+      animation-duration: 1.8s;
+    }
+
+    .bot.busy .mascot-wrap {
+      animation: botThink 0.9s ease-in-out infinite;
+    }
+
+    .mascot-img {
+      display: block;
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35));
+    }
+
+    /* Mí mắt: lớp màu đen che mắt hồng trong vài phần giây để tạo cú chớp mắt */
+    .lid {
+      position: absolute;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scaleY(0);
+      animation: botBlink 5s infinite;
+    }
+
+    .m-heart {
+      position: absolute;
+      width: 13%;
+      transform: translate(-50%, -50%);
+      transform-origin: 50% 90%;
+      animation: botHeart 1.8s ease-in-out infinite;
+    }
+
+    .fl {
+      position: absolute;
+      left: 6%;
+      top: 34%;
+      width: 9%;
+      opacity: 0;
+      animation: botRise 3.6s ease-in infinite;
+    }
+
+    .fl.f2 {
+      left: 14%;
+      animation-delay: 1.2s;
+    }
+
+    .fl.f3 {
+      left: 2%;
+      animation-delay: 2.4s;
+    }
+
+    @keyframes botFloat {
+      0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+      50%      { transform: translateY(-7px) rotate(1.5deg); }
+    }
+
+    @keyframes botThink {
+      0%, 100% { transform: translateY(0) rotate(-3deg); }
+      50%      { transform: translateY(-4px) rotate(3deg); }
+    }
+
+    @keyframes botShadow {
+      0%, 100% { transform: scaleX(1); opacity: 1; }
+      50%      { transform: scaleX(0.8); opacity: 0.6; }
+    }
+
+    @keyframes botBlink {
+      0%, 93%, 100% { transform: translate(-50%, -50%) scaleY(0); }
+      96%           { transform: translate(-50%, -50%) scaleY(1); }
+    }
+
+    @keyframes botHeart {
+      0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(-6deg); }
+      50%      { transform: translate(-50%, -58%) scale(1.14) rotate(6deg); }
+    }
+
+    @keyframes botRise {
+      0%   { opacity: 0; transform: translateY(8px) scale(0.6); }
+      20%  { opacity: 0.95; }
+      100% { opacity: 0; transform: translateY(-34px) scale(1.1); }
+    }
+
+    @keyframes botPop {
+      from { opacity: 0; transform: translateY(8px) scale(0.92); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    @keyframes botDot {
+      0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+      40%           { opacity: 1; transform: translateY(-3px); }
+    }
+
+    .bot-bubble {
+      max-width: 210px;
+      padding: 10px 14px;
+      border-radius: 16px 16px 4px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+      background: var(--cream);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+      animation: botPop 0.4s ease both;
+    }
+
+    .bot-panel {
+      display: flex;
+      flex-direction: column;
+      width: 370px;
+      max-width: calc(100vw - 28px);
+      height: 500px;
+      max-height: calc(100vh - 150px);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      background: #0D2447;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+      animation: botPop 0.3s ease both;
+    }
+
+    .bot-head {
+      flex: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: linear-gradient(135deg, var(--french), #3B4F86);
+    }
+
+    .bot-head b {
+      display: block;
+      font-size: 16px;
+      color: var(--cream);
+    }
+
+    .bot-head small {
+      font-size: 13px;
+      color: var(--icy);
+    }
+
+    .bot-head button {
+      margin-left: auto;
+      width: 30px;
+      height: 30px;
+      border: 0;
+      border-radius: 50%;
+      font-size: 20px;
+      line-height: 1;
+      color: var(--cream);
+      background: rgba(255, 255, 255, 0.16);
+      cursor: pointer;
+    }
+
+    .bot-mini {
+      flex: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: var(--cream);
+    }
+
+    .bot-mini img {
+      display: block;
+      width: 48px;
+      margin: -2px 0 0 -4px;
+    }
+
+    .bot-msgs {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      gap: 8px;
+      padding: 12px;
+      overflow-y: auto;
+    }
+
+    .msg {
+      flex: none;
+      max-width: 88%;
+      padding: 9px 12px;
+      border-radius: 14px;
+      font-size: 14.5px;
+      line-height: 1.5;
+    }
+
+    .msg.is-bot {
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+      color: var(--cream);
+      background: rgba(80, 105, 141, 0.6);
+    }
+
+    .msg.is-me {
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+      font-weight: 600;
+      color: var(--navy);
+      background: var(--marigold);
+    }
+
+    .msg ul {
+      margin: 6px 0 0 18px;
+      padding: 0;
+    }
+
+    .msg img {
+      display: block;
+      max-width: 170px;
+      max-height: 170px;
+      border-radius: 10px;
+    }
+
+    .dots span {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 4px;
+      border-radius: 50%;
+      background: var(--icy);
+      animation: botDot 1s infinite;
+    }
+
+    .dots span:nth-child(2) { animation-delay: 0.15s; }
+    .dots span:nth-child(3) { animation-delay: 0.3s; }
+
+    .bot-chips {
+      flex: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 0 12px 8px;
+    }
+
+    .bot-chips button {
+      padding: 6px 11px;
+      border: 1px solid var(--pink);
+      border-radius: 99px;
+      font: 600 13px inherit;
+      color: var(--cream);
+      background: rgba(206, 181, 212, 0.12);
+      cursor: pointer;
+    }
+
+    .bot-input {
+      flex: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .bot-input input {
+      flex: 1;
+    }
+
+    .bot-input button,
+    .bot-attach {
+      padding: 9px 12px;
+      border: 0;
+      border-radius: 10px;
+      font: 700 13px inherit;
+      color: var(--navy);
+      background: linear-gradient(135deg, var(--marigold), var(--primrose));
+      cursor: pointer;
+    }
+
+    .bot-attach {
+      margin: 0;
+      color: var(--cream);
+      background: rgba(206, 181, 212, 0.22);
+      border: 1px solid var(--pink);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .mascot-wrap,
+      .lid,
+      .m-heart,
+      .fl,
+      .bot-launch::before {
+        animation: none !important;
+      }
+    }
+
+    /* ---- Chế độ test, báo lỗi, ô mật khẩu ---- */
+    [hidden] {
+      display: none !important;
+    }
+
+    .testbar {
+      margin: 14px 0;
+      padding: 10px 12px;
+      border: 1px dashed var(--violet);
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--icy);
+      background: rgba(151, 125, 255, 0.12);
+    }
+
+    .err {
+      display: block;
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--bad);
+    }
+
+    input.invalid,
+    textarea.invalid,
+    select.invalid {
+      border-color: var(--bad);
+    }
+
+    .form-error {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border: 1px solid var(--bad);
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--bad);
+      background: rgba(248, 113, 113, 0.1);
+    }
+
+    .status {
+      display: inline-block;
+      margin-left: 10px;
+      font-size: 14px;
+      color: var(--ok);
+    }
+
+    .status.bad {
+      color: var(--bad);
+    }
+
+    .pw {
+      position: relative;
+    }
+
+    .pw input {
+      padding-right: 64px;
+    }
+
+    .pw button {
+      position: absolute;
+      top: 50%;
+      right: 8px;
+      transform: translateY(-50%);
+      border: 0;
+      font: 600 12px inherit;
+      color: var(--sky);
+      background: none;
+      cursor: pointer;
+    }
+
+    .strength {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .strength .track {
+      flex: 1;
+      height: 6px;
+      border-radius: 6px;
+      overflow: hidden;
+      background: rgba(11, 33, 66, 0.78);
+    }
+
+    .strength .fill {
+      width: 0;
+      height: 100%;
+      transition: width 0.3s, background 0.3s;
+    }
+
+    .link-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    .btn[disabled] {
+      opacity: 0.7;
+      cursor: wait;
+    }
+
+    .btn.small {
+      margin: 6px 4px 0 0;
+      padding: 8px 14px;
+      font-size: 13px;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      margin-right: 8px;
+      vertical-align: -2px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ---- Trang hồ sơ (profile) ---- */
+    .profile {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 16px;
+      margin-top: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 760px) {
+      .profile {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .profile-side {
+      text-align: center;
+    }
+
+    .profile-side b {
+      margin: 14px 0 2px;
+      font-size: 20px;
+    }
+
+    .profile-main .card {
+      margin-bottom: 16px;
+    }
+
+    .profile-main h3 {
+      margin-bottom: 4px;
+      font-size: 18px;
+    }
+
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto;
+      border-radius: 50%;
+      font-size: 48px;
+      font-weight: 800;
+      color: #fff;
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 0 0 3px var(--violet), 0 0 30px rgba(151, 125, 255, 0.4);
+    }
+
+    .avatar.sm {
+      display: inline-grid;
+      width: 26px;
+      height: 26px;
+      margin: 0 6px 0 0;
+      font-size: 12px;
+      vertical-align: middle;
+      box-shadow: none;
+    }
+
+    .swatches {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 14px 0 6px;
+    }
+
+    .swatches button {
+      width: 26px;
+      height: 26px;
+      border: 2px solid transparent;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .swatches button.on {
+      border-color: #fff;
+    }
+
+    .chip {
+      display: inline-block;
+      padding: 3px 12px;
+      border: 1px solid var(--sky);
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--icy);
+    }
+
+    .opts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0 12px;
+    }
+
+    .opts label,
+    .switch {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin: 0;
+      padding: 6px 0;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .opts input,
+    .switch input {
+      width: auto;
+    }
+
+    .counter {
+      text-align: right;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .danger {
+      border-color: var(--bad);
+    }
+
+    /* =========================================================
+       11. TRANG PRICE
+       ========================================================= */
+    .plan {
+      text-align: center;
+    }
+
+    .plan.hot {
+      border-color: var(--sky);
+      box-shadow: 0 0 0 1px var(--sky), 0 0 30px rgba(79, 172, 229, 0.25);
+    }
+
+    .plan .big {
+      margin: 6px 0;
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--icy);
+    }
+
+    .plan ul {
+      margin: 12px 0;
+      padding: 0;
+      list-style: none;
+      text-align: left;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .plan li {
+      padding: 6px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    /* =========================================================
+       12. CHÂN TRANG
+       ========================================================= */
+    .footer {
+      margin-top: 30px;
+      padding: 28px 0;
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .footer a {
+      margin: 0 8px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================================================
+       LOGO: khiên bảo vệ + đồng xu vàng có dấu tích xác nhận.
+       Khai báo một lần, dùng lại bằng <use href="#logo">.
+       ========================================================= -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="gShield" x1="0" y1="0" x2="0.9" y2="1">
+        <stop offset="0" stop-color="#5E84E2" />
+        <stop offset="1" stop-color="#8B6EC7" />
+      </linearGradient>
+
+      <linearGradient id="gCoin" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#F7EC8D" />
+        <stop offset="1" stop-color="#F6A93A" />
+      </linearGradient>
+
+      <symbol id="logo" viewBox="0 0 64 64">
+        <!-- Thân khiên -->
+        <path d="M32 3 L55 11 V30 C55 45 45.5 55.5 32 61 C18.5 55.5 9 45 9 30 V11 Z"
+              fill="url(#gShield)" />
+
+        <!-- Mặt sáng bên phải để tạo khối -->
+        <path d="M32 3 L55 11 V30 C55 45 45.5 55.5 32 61 Z"
+              fill="#FFFFFF" opacity="0.14" />
+
+        <!-- Đường viền trong -->
+        <path d="M32 8.5 L50 14.6 V30 C50 42 42.5 51 32 55.6 C21.5 51 14 42 14 30 V14.6 Z"
+              fill="none" stroke="#F5F4ED" stroke-width="1.6" opacity="0.55" />
+
+        <!-- Đồng xu vàng -->
+        <circle cx="32" cy="30" r="13" fill="url(#gCoin)" />
+        <circle cx="32" cy="30" r="9.6" fill="none" stroke="#102B53" stroke-width="1.4" opacity="0.35" />
+
+        <!-- Dấu tích xác nhận -->
+        <path d="M26.2 30.4 L30.4 34.6 L38.2 25.6" fill="none"
+              stroke="#102B53" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" />
+
+        <!-- Cạnh đồng xu phía dưới (gợi chồng tiền) -->
+        <path d="M22 47 C27 50.5 37 50.5 42 47" fill="none"
+              stroke="#F6A93A" stroke-width="2.2" stroke-linecap="round" />
+      </symbol>
+    </defs>
+  </svg>
+
+
+  <div class="wrap">
+
+    <!-- =========================================================
+         MENU (góc trên bên trái: Trang chủ, Giao dịch, Đăng nhập, Đăng ký)
+         ========================================================= -->
+    <header class="topbar">
+      <a class="brand" data-go="home">
+        <svg viewBox="0 0 64 64"><use href="#logo" /></svg>
+        <span>Shield<span class="pay">Pay</span></span>
+      </a>
+
+      <nav class="menu">
+        <a data-go="home" data-p="home" class="on">Trang chủ</a>
+        <a data-go="deal" data-p="deal">Giao dịch</a>
+        <a data-go="login" data-p="login" id="navLogin">Đăng nhập</a>
+        <a data-go="signup" data-p="signup" id="navSignup">Đăng ký</a>
+        <a data-go="profile" data-p="profile" id="navProfile" hidden>
+          <span class="avatar sm" id="navAvatar"></span><span id="navName"></span>
+        </a>
+        <a id="navLogout" hidden>Đăng xuất</a>
+      </nav>
+    </header>
+
+
+    <!-- =========================================================
+         TRANG CHỦ
+         ========================================================= -->
+    <main class="page on" id="home">
+
+      <section class="hero">
+        <div class="hero-logo">
+          <svg viewBox="0 0 64 64"><use href="#logo" /></svg>
+        </div>
+
+        <span class="kicker">AI · BẢO VỆ GIAO DỊCH MẠNG XÃ HỘI</span>
+
+        <h1>
+          Mua bán ngoài sàn,<br>
+          <span class="hl">an tâm hơn từng bước</span>
+        </h1>
+
+        <p class="lead">
+          Kiểm tra người bán <b>trước khi chuyển tiền</b>,
+          lưu <b>bằng chứng</b> an toàn và được hướng dẫn
+          <b>ngay khi có sự cố</b>. Tất cả trong một hành trình.
+        </p>
+
+        <button class="btn" data-go="deal">Dùng thử ngay</button>
+        <button class="btn ghost" data-go="price">Xem bảng giá</button>
+
+        <div class="stats">
+          <div class="stat"><strong>6</strong><span>công cụ bảo vệ giao dịch</span></div>
+          <div class="stat"><strong>Trước &amp; sau</strong><span>khi chuyển tiền đều có hỗ trợ</span></div>
+          <div class="stat"><strong>0đ</strong><span>để bắt đầu với gói Free</span></div>
+        </div>
+      </section>
+
+
+      <h2>Mua bán ngoài sàn đang thiếu gì?</h2>
+      <p class="muted">
+        Dành cho người hay mua đồ sưu tầm, merchandise, hàng limited,
+        hàng sold out hoặc second-hand qua Facebook, Instagram, Threads.
+      </p>
+
+      <div class="grid">
+        <div class="card">
+          <b>Khó biết ai đáng tin</b>
+          <span>Ảnh "proof" có thể làm giả, tài khoản mới chưa bị báo cáo vẫn có thể lừa đảo.</span>
+        </div>
+        <div class="card">
+          <b>Bằng chứng nằm rải rác</b>
+          <span>Bài đăng, tin nhắn, ảnh, số tài khoản, biên lai. Người bán xóa bài là mất dấu vết.</span>
+        </div>
+        <div class="card">
+          <b>Không biết bắt đầu từ đâu</b>
+          <span>Sau khi bị lừa, bạn phải tự gom thông tin để liên hệ ngân hàng hoặc trình báo.</span>
+        </div>
+        <div class="card">
+          <b>Nạn nhân bị cô lập</b>
+          <span>Nhiều người mất khoản nhỏ vì cùng một đối tượng nhưng không biết nhau.</span>
+        </div>
+      </div>
+
+
+      <h2>Sáu công cụ, một hành trình bảo vệ</h2>
+
+      <div class="grid">
+        <div class="card">
+          <div class="badge">1</div>
+          <b>Create Deal</b>
+          <span>Nhập thông tin người bán, tài khoản, sản phẩm, giá và ảnh chat.</span>
+        </div>
+        <div class="card">
+          <div class="badge">2</div>
+          <b>Risk Check</b>
+          <span>Xem các dấu hiệu đáng chú ý trước khi chuyển tiền.</span>
+        </div>
+        <div class="card">
+          <div class="badge">3</div>
+          <b>DealVault</b>
+          <span>Lưu hồ sơ và bằng chứng, kể cả khi bài đăng bị xóa.</span>
+        </div>
+        <div class="card">
+          <div class="badge">4</div>
+          <b>Verified Deal History</b>
+          <span>Lịch sử giao dịch đã xác nhận của người bán.</span>
+        </div>
+        <div class="card">
+          <div class="badge">5</div>
+          <b>Scam SOS</b>
+          <span>Sắp xếp bằng chứng và hướng dẫn từng bước khi nghi bị lừa.</span>
+        </div>
+        <div class="card">
+          <div class="badge">6</div>
+          <b>Related Incidents</b>
+          <span>Liên kết các vụ việc cùng số tài khoản, số điện thoại, hình ảnh.</span>
+        </div>
+      </div>
+
+
+      <h2>Công nghệ AI cho từng giao dịch</h2>
+
+      <div class="grid">
+        <div class="card">
+          <b>AI đọc ảnh chụp</b>
+          <span>Trích xuất tài khoản, số điện thoại, giá, cam kết.</span>
+        </div>
+        <div class="card">
+          <b>Nhận dạng hình ảnh</b>
+          <span>Phát hiện ảnh dùng lại trong nhiều vụ việc.</span>
+        </div>
+        <div class="card">
+          <b>Chấm điểm rủi ro</b>
+          <span>Tổng hợp báo cáo, thông tin lệch, vụ việc liên quan.</span>
+        </div>
+      </div>
+
+
+      <section class="hero">
+        <h2 style="margin-top: 20px;">Sẵn sàng giao dịch an tâm hơn?</h2>
+        <button class="btn" data-go="signup">Tạo tài khoản miễn phí</button>
+        <button class="btn ghost" data-go="about">Về chúng tôi</button>
+      </section>
+
+    </main>
+
+
+    <!-- =========================================================
+         TRANG GIAO DỊCH (đi từng bước, kết quả tính từ dữ liệu nhập)
+         ========================================================= -->
+    <main class="page" id="deal">
+
+      <h2>Hành trình một giao dịch với ShieldPay</h2>
+      <p class="muted">
+        Điền thông tin ở từng bước. ShieldPay tính toán từ dữ liệu bạn nhập và tự chuyển sang bước tiếp theo.
+      </p>
+
+      <div class="steps" id="steps">
+        <button data-s="1" class="on">1 Create Deal</button>
+        <button data-s="2" disabled>2 Risk Check</button>
+        <button data-s="3" disabled>3 DealVault</button>
+        <button data-s="4" disabled>4 Verified History</button>
+        <button data-s="5" disabled title="Mở khi có sự cố">5 Scam SOS</button>
+        <button data-s="6" disabled title="Mở sau khi gửi báo cáo">6 Related Incidents</button>
+      </div>
+
+      <!-- ===== Khung dữ liệu mẫu (chỉ hiện ở bước 1) ===== -->
+      <details class="card sample" id="samplePanel" open>
+        <summary>Chạy thử nhanh bằng dữ liệu mẫu (1.000 khách)</summary>
+        <p class="muted" style="font-size: 14px;">
+          Chọn một khách mẫu, ShieldPay điền sẵn thông tin để bạn đi hết các bước.
+          Muốn tự nhập tay thì cứ điền vào form bên dưới.
+        </p>
+
+        <div class="row">
+          <div>
+            <label for="smFilter">Kịch bản</label>
+            <select id="smFilter"></select>
+          </div>
+          <div>
+            <label for="smSearch">Tìm theo mã khách hoặc tên</label>
+            <input id="smSearch" placeholder="KH0001 hoặc tên người mua" autocomplete="off">
+          </div>
+        </div>
+
+        <div id="smList"></div>
+
+        <div class="actions">
+          <div class="pager">
+            <button class="btn ghost small" type="button" id="smPrev" style="margin: 0;">←</button>
+            <span id="smPageInfo"></span>
+            <button class="btn ghost small" type="button" id="smNext" style="margin: 0;">→</button>
+          </div>
+          <div>
+            <button class="btn small" type="button" id="smRandom" style="margin-right: 6px;">Lấy ngẫu nhiên 1 khách</button>
+            <button class="btn ghost small" type="button" id="smClear">Xóa mẫu</button>
+          </div>
+        </div>
+
+        <p class="note" id="smStatus" hidden style="color: var(--ok); font-size: 14px;"></p>
+      </details>
+
+
+      <!-- ===== Bước 1: Create Deal ===== -->
+      <form class="card step on" id="s1" novalidate>
+        <b>Bước 1 · Tạo giao dịch (Create Deal)</b>
+        <p class="muted" style="font-size: 14px;">Các ô có dấu * là bắt buộc.</p>
+
+        <div class="row">
+          <div>
+            <label for="dSeller">Tài khoản mạng xã hội của người bán *</label>
+            <input id="dSeller" placeholder="@ten.nguoiban hoặc link trang cá nhân" autocomplete="off">
+            <small class="err" id="dSellerErr"></small>
+          </div>
+          <div>
+            <label for="dPlatform">Nền tảng</label>
+            <select id="dPlatform">
+              <option>Facebook</option>
+              <option>Instagram</option>
+              <option>Threads</option>
+              <option>Khác</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="dHolder">Tên chủ tài khoản ngân hàng *</label>
+            <input id="dHolder" placeholder="Như hiển thị khi chuyển khoản" autocomplete="off">
+            <small class="err" id="dHolderErr"></small>
+          </div>
+          <div>
+            <label for="dAcc">Số tài khoản nhận tiền *</label>
+            <input id="dAcc" inputmode="numeric" placeholder="Chỉ nhập số" autocomplete="off">
+            <small class="err" id="dAccErr"></small>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="dPhone">Số điện thoại người bán (nếu có)</label>
+            <input id="dPhone" inputmode="tel" placeholder="0901234567" autocomplete="off">
+            <small class="err" id="dPhoneErr"></small>
+          </div>
+          <div>
+            <label for="dAge">Thời gian tạo tài khoản người bán *</label>
+            <select id="dAge">
+              <option value="">Chọn</option>
+              <option value="lt1">Dưới 1 tháng</option>
+              <option value="m1to6">1 đến 6 tháng</option>
+              <option value="m6to24">6 đến 24 tháng</option>
+              <option value="gt24">Trên 24 tháng</option>
+              <option value="unknown">Không rõ</option>
+            </select>
+            <small class="err" id="dAgeErr"></small>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="dItem">Sản phẩm *</label>
+            <input id="dItem" placeholder="Tên sản phẩm bạn muốn mua" autocomplete="off">
+            <small class="err" id="dItemErr"></small>
+          </div>
+          <div>
+            <label for="dPrice">Giá bán (VNĐ) *</label>
+            <input id="dPrice" inputmode="numeric" placeholder="Ví dụ: 3500000" autocomplete="off">
+            <small class="err" id="dPriceErr"></small>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="dRef">Giá thị trường (nếu biết)</label>
+            <input id="dRef" inputmode="numeric" placeholder="Dùng để so sánh mức giảm" autocomplete="off">
+            <small class="err" id="dRefErr"></small>
+          </div>
+          <div>
+            <label for="dPay">Hình thức thanh toán *</label>
+            <select id="dPay">
+              <option value="">Chọn</option>
+              <option value="prepay">Chuyển khoản trước toàn bộ</option>
+              <option value="deposit">Đặt cọc một phần</option>
+              <option value="cod">COD hoặc gặp mặt</option>
+            </select>
+            <small class="err" id="dPayErr"></small>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="dDays">Thời gian giao hàng cam kết (ngày) *</label>
+            <input id="dDays" inputmode="numeric" placeholder="Từ 1 đến 60" autocomplete="off">
+            <small class="err" id="dDaysErr"></small>
+          </div>
+          <div>
+            <label for="dFiles">Lịch sử trò chuyện/bài đăng</label>
+            <input type="file" id="dFiles" accept="image/*" multiple>
+          </div>
+        </div>
+
+        <label for="dChat">Nội dung trò chuyện/cam kết của người bán</label>
+        <textarea id="dChat" rows="3" placeholder="Dán đoạn trò chuyện vào đây để ShieldPay tìm các dấu hiệu đáng chú ý"></textarea>
+        <p class="note">Bản demo chưa đọc nội dung ảnh. Ảnh chỉ được tính là bằng chứng đính kèm, chữ trong ô trò chuyện mới được phân tích.</p>
+
+        <div class="form-error" id="dError" role="alert" hidden></div>
+        <button class="btn" id="dBtn" type="button" style="margin-bottom: 0;">Kiểm tra rủi ro →</button>
+      </form>
+
+
+      <!-- ===== Bước 2: Risk Check ===== -->
+      <div class="card step" id="s2">
+        <b>Bước 2 · Kiểm tra rủi ro (Risk Check)</b>
+        <p class="muted" style="font-size: 14px;" id="riskSummary"></p>
+
+        <div class="score" id="score">0</div>
+        <span class="muted" id="riskLevel"></span>
+        <div class="bar"><div id="bar"></div></div>
+
+        <div id="riskRows"></div>
+
+        <p class="note" id="riskFormula"></p>
+        <p style="font-size: 14px; margin-top: 10px;" id="riskExposure"></p>
+
+        <div style="margin-top: 12px;">
+          <b style="font-size: 15px; margin: 0;">Nên làm gì</b>
+          <div id="riskTips"></div>
+        </div>
+
+        <p class="note">ShieldPay chỉ nêu các yếu tố nên cân nhắc, không khẳng định ai đó là lừa đảo hay an toàn tuyệt đối.</p>
+
+        <div class="actions">
+          <button class="btn ghost small" type="button" id="backTo1">← Sửa thông tin</button>
+          <button class="btn small" type="button" id="toVault">Tạo hồ sơ DealVault →</button>
+        </div>
+      </div>
+
+
+      <!-- ===== Bước 3: DealVault ===== -->
+      <form class="card step" id="s3" novalidate>
+        <b>Bước 3 · Lưu hồ sơ (DealVault)</b>
+        <p class="muted" style="font-size: 14px;">
+          Mã hồ sơ <span id="vaultId" style="color: var(--icy); font-weight: 700;"></span>.
+          Nếu bài đăng hoặc tài khoản người bán bị xóa, bạn vẫn còn bằng chứng.
+        </p>
+
+        <div class="timeline" id="vaultTimeline"></div>
+
+        <label for="vPost">Link bài đăng gốc (nên lưu để phòng bài bị xóa)</label>
+        <input id="vPost" placeholder="https://..." autocomplete="off">
+
+        <label for="vFiles">Thêm ảnh bằng chứng (biên lai, ảnh sản phẩm...)</label>
+        <input type="file" id="vFiles" accept="image/*" multiple>
+
+        <label>Bạn đã chuyển khoản chưa? *</label>
+        <div class="opts-col">
+          <label><input type="radio" name="vPaid" value="no">Chưa, tôi chỉ lưu hồ sơ trước</label>
+          <label><input type="radio" name="vPaid" value="yes">Rồi, tôi đã chuyển khoản</label>
+        </div>
+        <small class="err" id="vPaidErr"></small>
+
+        <div id="vPayBox" hidden>
+          <div class="row">
+            <div>
+              <label for="vAmount">Số tiền đã chuyển (VNĐ) *</label>
+              <input id="vAmount" inputmode="numeric" autocomplete="off">
+              <small class="err" id="vAmountErr"></small>
+            </div>
+            <div>
+              <label for="vTime">Thời điểm chuyển khoản *</label>
+              <input id="vTime" type="datetime-local">
+              <small class="err" id="vTimeErr"></small>
+              <a id="vNow" style="font-size: 12px;">Lấy giờ hiện tại</a>
+            </div>
+          </div>
+          <p class="note" id="vDiff"></p>
+        </div>
+
+        <div class="form-error" id="vError" role="alert" hidden></div>
+        <button class="btn" id="vBtn" type="button" style="margin-bottom: 0;">Lưu hồ sơ →</button>
+      </form>
+
+
+      <!-- ===== Bước 4: Verified Deal History ===== -->
+      <div class="card step" id="s4">
+        <b>Bước 4 · Lịch sử giao dịch đã xác nhận (Verified Deal History)</b>
+        <p class="muted" style="font-size: 14px;" id="histSeller"></p>
+        <p class="note" id="vaultNote" style="margin-top: 4px;"></p>
+
+        <div class="kv" id="histStats"></div>
+
+        <form id="outForm" novalidate>
+          <b style="font-size: 16px; margin: 0;">Xác nhận kết quả giao dịch của bạn</b>
+          <p class="muted" style="font-size: 14px;" id="deadlineInfo"></p>
+
+          <div class="opts-col">
+            <label><input type="radio" name="outcome" value="ok">Tôi đã nhận hàng đúng mô tả</label>
+            <label><input type="radio" name="outcome" value="issue">Tôi đã nhận hàng nhưng có vấn đề</label>
+            <label><input type="radio" name="outcome" value="late">Quá hạn hoặc người bán biến mất, tôi chưa nhận được hàng</label>
+          </div>
+          <small class="err" id="outcomeErr"></small>
+
+          <button class="btn" id="outBtn" type="button" style="margin-bottom: 0;">Xác nhận</button>
+        </form>
+
+        <div id="noPayBox" hidden>
+          <p class="muted" style="font-size: 14px;">
+            Hồ sơ đã được lưu nhưng chưa ghi nhận khoản chuyển khoản nào.
+            Sau khi chuyển tiền, hãy quay lại bước 3 để cập nhật biên lai, rồi xác nhận kết quả tại đây.
+          </p>
+          <button class="btn small" type="button" id="backTo3">← Cập nhật ở bước 3</button>
+        </div>
+
+        <div id="doneBox" hidden>
+          <p id="doneText" style="font-size: 15px; color: var(--ok);"></p>
+          <div class="actions" style="justify-content: flex-start;">
+            <button class="btn small" type="button" id="newDeal4">Tạo giao dịch mới</button>
+            <button class="btn ghost small" type="button" id="tryProblem">Thử kịch bản có sự cố</button>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ===== Bước 5: Scam SOS ===== -->
+      <div class="card step" id="s5">
+        <b>Bước 5 · Hỗ trợ khi nghi bị lừa (Scam SOS)</b>
+
+        <form id="sosForm" novalidate>
+          <label for="sosType">Sự việc bạn gặp phải *</label>
+          <select id="sosType">
+            <option value="">Chọn</option>
+            <option>Người bán không giao hàng</option>
+            <option>Hàng nhận được sai với mô tả</option>
+            <option>Người bán chặn liên lạc</option>
+            <option>Bài đăng hoặc tài khoản người bán bị xóa</option>
+          </select>
+          <small class="err" id="sosTypeErr"></small>
+          <button class="btn" id="sosBtn" type="button" style="margin-bottom: 0;">Tạo hồ sơ sự việc</button>
+        </form>
+
+        <div id="sosResult" hidden>
+          <p id="sosUrgency" style="font-size: 15px; font-weight: 700; color: var(--warn);"></p>
+
+          <p class="muted" style="font-size: 14px; margin-top: 10px;">Tiến độ xử lý: <span id="sosCount">0/5</span></p>
+          <div class="bar"><div id="sosBar" style="background: linear-gradient(90deg, var(--sky), var(--violet));"></div></div>
+
+          <div id="sosChecklist" class="check">
+            <label><input type="checkbox"><span id="sosFirst"></span></label>
+            <label><input type="checkbox">Lưu biên lai, ảnh chat và bài đăng từ DealVault</label>
+            <label><input type="checkbox">Xem lại dòng thời gian sự việc bên dưới</label>
+            <label><input type="checkbox">Chuẩn bị hồ sơ để trình báo cơ quan chức năng khi cần</label>
+            <label><input type="checkbox">Gửi báo cáo để cảnh báo người mua khác</label>
+          </div>
+
+          <div class="timeline" id="sosTimeline"></div>
+
+          <label for="sosSummary">Hồ sơ tóm tắt (có thể sao chép để gửi ngân hàng hoặc cơ quan chức năng)</label>
+          <textarea id="sosSummary" class="summary" rows="12" readonly></textarea>
+
+          <div class="actions" style="justify-content: flex-start;">
+            <button class="btn ghost small" type="button" id="sosCopy">Sao chép hồ sơ</button>
+            <span class="status" id="sosCopyStatus" hidden></span>
+          </div>
+
+          <button class="btn" type="button" id="sosSend">Gửi báo cáo và xem vụ việc liên quan →</button>
+        </div>
+      </div>
+
+
+      <!-- ===== Bước 6: Related Incidents ===== -->
+      <div class="card step" id="s6">
+        <b>Bước 6 · Vụ việc liên quan (Related Incidents)</b>
+        <p class="muted" style="font-size: 14px;" id="relIntro"></p>
+
+        <div id="relTable"></div>
+        <div class="kv" id="relStats"></div>
+
+        <p class="note" id="relNote"></p>
+        <button class="btn" type="button" id="newDeal6" style="margin-bottom: 0;">Tạo giao dịch mới</button>
+      </div>
+
+    </main>
+
+
+    <!-- =========================================================
+         TRANG ĐĂNG NHẬP (kiểm tra dữ liệu như web thật, không lưu lại)
+         ========================================================= -->
+    <main class="page" id="login">
+      <div class="card auth">
+        <h2 style="margin-top: 0;">Chào mừng quay lại</h2>
+        <p class="muted" style="font-size: 14px;">Đăng nhập để xem hồ sơ giao dịch và lịch sử của bạn.</p>
+
+        <form id="loginForm" novalidate>
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" type="email" placeholder="ban@email.com" autocomplete="off">
+          <small class="err" id="loginEmailErr"></small>
+
+          <label for="loginPass">Mật khẩu</label>
+          <div class="pw">
+            <input id="loginPass" type="password" placeholder="Nhập mật khẩu" autocomplete="off">
+            <button type="button" data-toggle="loginPass">Hiện</button>
+          </div>
+          <small class="err" id="loginPassErr"></small>
+
+          <div class="link-row"><a id="forgot">Quên mật khẩu?</a></div>
+          <p class="note" id="forgotMsg" hidden>
+            Bản test không gửi email thật. Hãy dùng lại mật khẩu đã đăng ký trong phiên này.
+          </p>
+
+          <div class="form-error" id="loginError" role="alert" hidden></div>
+
+          <button class="btn" id="loginBtn" type="button" style="width: 100%; margin: 16px 0 0;">Đăng nhập</button>
+        </form>
+
+        <div class="testbar">
+          Chế độ test và học tập: dữ liệu chỉ nằm trong bộ nhớ của trang này, mất khi tải lại và không gửi đi đâu.
+          Nếu chưa đăng ký, nhập email hợp lệ và mật khẩu từ 6 ký tự để thử.
+        </div>
+
+        <p class="note">Chưa có tài khoản? <a data-go="signup">Đăng ký ngay</a></p>
+      </div>
+    </main>
+
+
+    <!-- =========================================================
+         TRANG ĐĂNG KÝ
+         ========================================================= -->
+    <main class="page" id="signup">
+      <div class="card auth">
+        <h2 style="margin-top: 0;">Tạo tài khoản ShieldPay</h2>
+        <p class="muted" style="font-size: 14px;">Bắt đầu giao dịch an tâm hơn chỉ trong một phút.</p>
+
+        <form id="signupForm" novalidate>
+          <label for="suName">Họ và tên</label>
+          <input id="suName" placeholder="Nguyễn Văn A" autocomplete="off">
+          <small class="err" id="suNameErr"></small>
+
+          <label for="suEmail">Email</label>
+          <input id="suEmail" type="email" placeholder="ban@email.com" autocomplete="off">
+          <small class="err" id="suEmailErr"></small>
+
+          <label for="suPass">Mật khẩu</label>
+          <div class="pw">
+            <input id="suPass" type="password" placeholder="Ít nhất 8 ký tự, có chữ và số" autocomplete="off">
+            <button type="button" data-toggle="suPass">Hiện</button>
+          </div>
+          <div class="strength">
+            <div class="track"><div class="fill" id="suStrengthFill"></div></div>
+            <span id="suStrengthText">Độ mạnh</span>
+          </div>
+          <small class="err" id="suPassErr"></small>
+
+          <label for="suConfirm">Nhập lại mật khẩu</label>
+          <div class="pw">
+            <input id="suConfirm" type="password" placeholder="Nhập lại mật khẩu" autocomplete="off">
+            <button type="button" data-toggle="suConfirm">Hiện</button>
+          </div>
+          <small class="err" id="suConfirmErr"></small>
+
+          <label for="suInterest">Bạn thường mua bán gì?</label>
+          <select id="suInterest">
+            <option>Đồ sưu tầm</option>
+            <option>Merchandise</option>
+            <option>Hàng limited</option>
+            <option>Second-hand</option>
+            <option>Khác</option>
+          </select>
+
+          <label style="display: flex; gap: 8px; align-items: center;">
+            <input type="checkbox" id="suTerms" style="width: auto;">
+            Tôi đồng ý với điều khoản sử dụng
+          </label>
+          <small class="err" id="suTermsErr"></small>
+
+          <div class="form-error" id="signupError" role="alert" hidden></div>
+
+          <button class="btn" id="signupBtn" type="button" style="width: 100%; margin: 16px 0 0;">Tạo tài khoản</button>
+        </form>
+
+        <div class="testbar">
+          Chế độ test và học tập: tài khoản chỉ tồn tại trong bộ nhớ của trang này,
+          mất khi tải lại và không gửi đi đâu. Đừng dùng mật khẩu thật của bạn.
+        </div>
+
+        <p class="note">Đã có tài khoản? <a data-go="login">Đăng nhập</a></p>
+      </div>
+    </main>
+
+
+    <!-- =========================================================
+         TRANG HỒ SƠ (chỉ vào được khi đã đăng nhập)
+         ========================================================= -->
+    <main class="page" id="profile">
+
+      <div class="testbar" id="welcome" hidden></div>
+
+      <div class="profile">
+
+        <!-- Cột trái: ảnh đại diện -->
+        <aside class="card profile-side">
+          <div class="avatar" id="avatarBig"></div>
+          <b id="sideName"></b>
+          <small id="sideEmail"></small>
+          <div style="margin-top: 10px;"><span class="chip" id="sidePlan"></span></div>
+          <small id="sideJoined" style="display: block; margin-top: 8px;"></small>
+
+          <div class="swatches" id="swatches"></div>
+          <small>Chọn màu ảnh đại diện</small>
+
+          <div style="margin-top: 10px;">
+            <label class="btn small" for="avatarFile" style="display: inline-block; cursor: pointer;">Tải ảnh lên</label>
+            <button class="btn small ghost" type="button" id="avatarClear">Xóa ảnh</button>
+            <input type="file" id="avatarFile" accept="image/*" hidden>
+          </div>
+          <small class="status" id="avatarStatus" hidden></small>
+        </aside>
+
+        <!-- Cột phải: các form chỉnh sửa -->
+        <div class="profile-main">
+
+          <form class="card" id="profileForm" novalidate>
+            <h3>Thông tin cá nhân</h3>
+
+            <div class="row">
+              <div>
+                <label for="pfName">Họ và tên</label>
+                <input id="pfName" autocomplete="off">
+                <small class="err" id="pfNameErr"></small>
+              </div>
+              <div>
+                <label for="pfEmail">Email</label>
+                <input id="pfEmail" type="email" autocomplete="off">
+                <small class="err" id="pfEmailErr"></small>
+              </div>
+            </div>
+
+            <div class="row">
+              <div>
+                <label for="pfPhone">Số điện thoại (không bắt buộc)</label>
+                <input id="pfPhone" placeholder="0901234567" autocomplete="off">
+                <small class="err" id="pfPhoneErr"></small>
+              </div>
+              <div>
+                <label for="pfCity">Tỉnh / thành phố</label>
+                <input id="pfCity" placeholder="TP. Hồ Chí Minh" autocomplete="off">
+              </div>
+            </div>
+
+            <label for="pfBio">Giới thiệu ngắn</label>
+            <textarea id="pfBio" rows="3" maxlength="160" placeholder="Bạn thường sưu tầm gì?"></textarea>
+            <div class="counter"><span id="bioCount">0</span>/160</div>
+            <small class="err" id="pfBioErr"></small>
+
+            <h3 style="margin-top: 16px;">Sở thích mua bán</h3>
+            <div class="opts">
+              <label><input type="checkbox" name="interest" value="Đồ sưu tầm">Đồ sưu tầm</label>
+              <label><input type="checkbox" name="interest" value="Merchandise">Merchandise</label>
+              <label><input type="checkbox" name="interest" value="Hàng limited">Hàng limited</label>
+              <label><input type="checkbox" name="interest" value="Second-hand">Second-hand</label>
+              <label><input type="checkbox" name="interest" value="Khác">Khác</label>
+            </div>
+
+            <label for="pfPlan">Gói đang dùng (mô phỏng, không thanh toán)</label>
+            <select id="pfPlan">
+              <option>Free</option>
+              <option>Plus</option>
+              <option>Business</option>
+            </select>
+
+            <h3 style="margin-top: 16px;">Thông báo</h3>
+            <label class="switch"><input type="checkbox" id="ntRisk">Cảnh báo khi người bán có dấu hiệu rủi ro</label>
+            <label class="switch"><input type="checkbox" id="ntNews">Tin tức và mẹo an toàn khi giao dịch</label>
+
+            <button class="btn" id="profileBtn" type="button" style="margin-bottom: 0;">Lưu thay đổi</button>
+            <span class="status" id="infoStatus" hidden></span>
+          </form>
+
+
+          <form class="card" id="pwForm" novalidate>
+            <h3>Đổi mật khẩu</h3>
+
+            <label for="pwCurrent">Mật khẩu hiện tại</label>
+            <input id="pwCurrent" type="password" autocomplete="off">
+            <small class="err" id="pwCurrentErr"></small>
+
+            <div class="row">
+              <div>
+                <label for="pwNew">Mật khẩu mới</label>
+                <input id="pwNew" type="password" autocomplete="off">
+                <small class="err" id="pwNewErr"></small>
+              </div>
+              <div>
+                <label for="pwConfirm">Nhập lại mật khẩu mới</label>
+                <input id="pwConfirm" type="password" autocomplete="off">
+                <small class="err" id="pwConfirmErr"></small>
+              </div>
+            </div>
+
+            <button class="btn" id="pwBtn" type="button" style="margin-bottom: 0;">Cập nhật mật khẩu</button>
+            <span class="status" id="pwStatus" hidden></span>
+          </form>
+
+
+          <div class="card danger">
+            <h3>Tài khoản</h3>
+            <p class="muted" style="font-size: 14px;">Đăng xuất hoặc xóa tài khoản test khỏi bộ nhớ của trang.</p>
+
+            <button class="btn ghost small" type="button" id="logoutBtn">Đăng xuất</button>
+            <button class="btn ghost small" type="button" id="deleteAsk" style="color: var(--bad); border-color: var(--bad);">Xóa tài khoản</button>
+
+            <div id="deleteConfirm" hidden style="margin-top: 10px;">
+              <span class="muted" style="font-size: 14px;">Bạn chắc chắn muốn xóa? Hồ sơ sẽ mất ngay.</span><br>
+              <button class="btn small" type="button" id="deleteYes" style="background: var(--bad);">Xóa ngay</button>
+              <button class="btn ghost small" type="button" id="deleteNo">Hủy</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+
+    <!-- =========================================================
+         TRANG ABOUT US
+         ========================================================= -->
+    <main class="page" id="about">
+
+      <section class="hero">
+        <h1>Về <span class="hl">ShieldPay</span></h1>
+        <p class="lead">Giúp mọi giao dịch ngoài sàn <b>minh bạch</b> và <b>an tâm</b> hơn.</p>
+      </section>
+
+      <div class="card">
+        <span style="font-size: 15px;">
+          ShieldPay ra đời từ một thực tế quen thuộc: nhiều người mua đồ sưu tầm, hàng limited
+          hay second-hand qua mạng xã hội phải chuyển tiền cho người lạ mà không có cơ chế bảo vệ nào.
+          Chúng tôi theo sát toàn bộ một giao dịch, từ trước khi chuyển tiền đến khi xảy ra sự cố,
+          và biến mỗi vụ việc được báo cáo thành cảnh báo cho người mua tiếp theo.
+        </span>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <b>Minh bạch</b>
+          <span>Chỉ nêu các yếu tố nên cân nhắc, không kết luận thay người dùng.</span>
+        </div>
+        <div class="card">
+          <b>Cộng đồng</b>
+          <span>Mỗi báo cáo giúp bảo vệ người mua sau.</span>
+        </div>
+        <div class="card">
+          <b>Có trách nhiệm</b>
+          <span>Không giữ tiền, không thay thế cơ quan chức năng.</span>
+        </div>
+      </div>
+
+    </main>
+
+
+    <!-- =========================================================
+         TRANG PRICE (mức giá chỉ là gợi ý cho prototype)
+         ========================================================= -->
+    <main class="page" id="price">
+
+      <section class="hero" style="padding-bottom: 6px;">
+        <h1>Chọn gói <span class="hl">phù hợp</span></h1>
+        <p class="lead">Bắt đầu miễn phí, nâng cấp khi giao dịch nhiều hơn.</p>
+      </section>
+
+      <div class="grid">
+
+        <div class="card plan">
+          <b>Free</b>
+          <div class="big">0đ</div>
+          <small>Người mua thỉnh thoảng</small>
+          <ul>
+            <li>Risk Check 5 lượt / tháng</li>
+            <li>DealVault 3 hồ sơ</li>
+            <li>Xem Verified History</li>
+            <li>Scam SOS hướng dẫn cơ bản</li>
+          </ul>
+          <button class="btn ghost" data-go="signup" style="margin: 0;">Bắt đầu miễn phí</button>
+        </div>
+
+        <div class="card plan hot">
+          <b>Plus</b>
+          <div class="big">49.000đ<small>/tháng</small></div>
+          <small>Người mua bán thường xuyên</small>
+          <ul>
+            <li>Risk Check không giới hạn</li>
+            <li>DealVault 50 hồ sơ</li>
+            <li>Xem và ghi nhận History</li>
+            <li>Scam SOS hồ sơ đầy đủ</li>
+            <li>Related Incidents</li>
+          </ul>
+          <button class="btn" data-go="signup" style="margin: 0;">Chọn Plus</button>
+        </div>
+
+        <div class="card plan">
+          <b>Business</b>
+          <div class="big">199.000đ<small>/tháng</small></div>
+          <small>Shop, cộng đồng, nhóm bán</small>
+          <ul>
+            <li>Mọi thứ trong Plus</li>
+            <li>DealVault không giới hạn</li>
+            <li>Huy hiệu cửa hàng</li>
+            <li>Thông báo vụ việc liên quan</li>
+            <li>Ưu tiên hỗ trợ</li>
+          </ul>
+          <button class="btn ghost" data-go="about" style="margin: 0;">Liên hệ tư vấn</button>
+        </div>
+
+      </div>
+
+      <p class="note" style="text-align: center;">
+        ShieldPay không giữ tiền và không bảo đảm người bán an toàn. Mức giá chỉ là gợi ý cho prototype.
+      </p>
+
+    </main>
+
+
+    <!-- =========================================================
+         CHÂN TRANG
+         ========================================================= -->
+    <footer class="footer">
+      ShieldPay · Bản prototype dùng dữ liệu mô phỏng, chưa kết nối ngân hàng và không giữ tiền của người dùng.
+      <br>
+      <a data-go="about">About us</a>
+      <a data-go="price">Price</a>
+      <a data-go="signup">Đăng ký</a>
+    </footer>
+
+  </div>
+
+
+  <!-- =========================================================
+       TRỢ LÝ SHIELDY (hỏi đáp bằng chữ và quét ảnh)
+       ========================================================= -->
+  <div class="bot" id="bot">
+
+    <div class="bot-panel" id="botPanel" hidden>
+      <div class="bot-head">
+        <span class="bot-mini" id="botMini"></span>
+        <div>
+          <b>Shieldy</b>
+          <small>Trợ lý ShieldPay</small>
+        </div>
+        <button type="button" id="botClose" aria-label="Đóng">×</button>
+      </div>
+
+      <div class="bot-msgs" id="botMsgs"></div>
+      <div class="bot-chips" id="botChips"></div>
+
+      <div class="bot-input">
+        <label class="bot-attach" for="botFile" title="Gửi ảnh để Shieldy quét">Ảnh</label>
+        <input type="file" id="botFile" accept="image/*" hidden>
+        <input id="botText" placeholder="Hỏi gì cũng được, hoặc dán số tài khoản..." autocomplete="off">
+        <button type="button" id="botSend">Gửi</button>
+      </div>
+    </div>
+
+    <div class="bot-bubble" id="botBubble" hidden>Xin chào! Cần mình giúp gì không?</div>
+
+    <button type="button" class="bot-launch" id="botLaunch" aria-label="Mở trợ lý Shieldy">
+      <span id="botMascot"></span>
+    </button>
+
+  </div>
+
+
+  <!-- Dữ liệu ảnh trợ lý (chuỗi dài, không cần đọc). Muốn đổi ảnh: thay chuỗi này bằng ảnh mới. -->
+  <script>
+    var MASCOT = {
+      eyes: [{"x": 32.63, "y": 41.44, "w": 8.45, "h": 9.59}, {"x": 60.92, "y": 43.49, "w": 9.15, "h": 9.59}],
+      antenna: [60.56, 9.59],
+      visor: "#272628",
+      src: 'data:image/webp;base64,' +
+        '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' +
+        ''
+    };
+  </script>
+
+  <script>
+    /* =========================================================
+       JAVASCRIPT
+       Lưu ý: mọi dữ liệu tài khoản chỉ nằm trong biến JS bên dưới.
+       Không dùng localStorage, cookie hay gửi đi đâu. Tải lại trang là mất.
+       ========================================================= */
+
+    var account = null;   /* tài khoản đã đăng ký trong phiên này */
+    var user = null;      /* tài khoản đang đăng nhập (null = chưa đăng nhập) */
+
+    var AVATAR_COLORS = [
+      { bg: 'linear-gradient(135deg, #F6A93A, #F7EC8D)', fg: '#102B53' },
+      { bg: 'linear-gradient(135deg, #CEB5D4, #B0B3D6)', fg: '#102B53' },
+      { bg: 'linear-gradient(135deg, #7D9FC0, #4E7AB1)', fg: '#FFFFFF' },
+      { bg: 'linear-gradient(135deg, #8B6EC7, #5E84E2)', fg: '#FFFFFF' },
+      { bg: 'linear-gradient(135deg, #9BBCAC, #77A39A)', fg: '#102B53' }
+    ];
+
+
+    /* ---------------------------------------------------------
+       TIỆN ÍCH
+       --------------------------------------------------------- */
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+    function isEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    /* Hiện hoặc xóa lỗi của một ô. Trả về true nếu hợp lệ. */
+    function setError(id, message) {
+      var input = $(id);
+      var out = $(id + 'Err');
+
+      if (input) { input.classList.toggle('invalid', !!message); }
+      if (out) { out.textContent = message || ''; }
+
+      return !message;
+    }
+
+    function passwordProblem(pw) {
+      if (pw.length < 8) { return 'Mật khẩu cần ít nhất 8 ký tự.'; }
+      if (!/[A-Za-z]/.test(pw) || !/\d/.test(pw)) { return 'Mật khẩu cần có cả chữ và số.'; }
+      return '';
+    }
+
+    function passwordScore(pw) {
+      var score = 0;
+      if (pw.length >= 8) { score++; }
+      if (pw.length >= 12) { score++; }
+      if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) { score++; }
+      if (/\d/.test(pw)) { score++; }
+      if (/[^A-Za-z0-9]/.test(pw)) { score++; }
+      return score;
+    }
+
+    function showStrength(pw) {
+      var score = pw ? passwordScore(pw) : 0;
+      var fill = $('suStrengthFill');
+      var text = $('suStrengthText');
+
+      fill.style.width = (score / 5 * 100) + '%';
+
+      if (!pw) {
+        text.textContent = 'Độ mạnh';
+      } else if (score <= 2) {
+        fill.style.background = 'var(--bad)';
+        text.textContent = 'Yếu';
+      } else if (score === 3) {
+        fill.style.background = 'var(--warn)';
+        text.textContent = 'Trung bình';
+      } else {
+        fill.style.background = 'var(--ok)';
+        text.textContent = 'Mạnh';
+      }
+    }
+
+    /* Gắn xử lý cho form mà không phụ thuộc vào sự kiện submit
+       (khối nhúng của Google Sites có thể chặn gửi form) */
+    function bindForm(formId, buttonId, handler) {
+      var form = $(formId);
+      var button = $(buttonId);
+
+      form.addEventListener('submit', function (e) { e.preventDefault(); });
+
+      button.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (!button.disabled) { handler(); }
+      });
+
+      form.addEventListener('keydown', function (e) {
+        var t = e.target;
+        var typing = t.tagName === 'INPUT' && ['file', 'checkbox', 'radio'].indexOf(t.type) === -1;
+
+        if (e.key === 'Enter' && typing && !button.disabled) {
+          e.preventDefault();
+          handler();
+        }
+      });
+    }
+
+    function setLoading(button, loading, label) {
+      button.disabled = loading;
+      button.innerHTML = loading ? '<span class="spinner"></span>' + label : label;
+    }
+
+    function showBox(id, message) {
+      $(id).textContent = message;
+      $(id).hidden = false;
+    }
+
+    /* Thông báo nhỏ cạnh nút, tự ẩn sau 3 giây */
+    function showStatus(id, message, isError) {
+      var el = $(id);
+      el.textContent = message;
+      el.classList.toggle('bad', !!isError);
+      el.hidden = false;
+
+      clearTimeout(el.hideTimer);
+      el.hideTimer = setTimeout(function () { el.hidden = true; }, 3000);
+    }
+
+    function firstName(fullName) {
+      var parts = fullName.trim().split(/\s+/);
+      return parts[parts.length - 1];
+    }
+
+    function nameFromEmail(email) {
+      var local = email.split('@')[0].replace(/[._-]+/g, ' ');
+      return local.replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+    }
+
+    function newAccount(name, email, password, interest) {
+      return {
+        name: name,
+        email: email,
+        password: password,
+        phone: '',
+        city: '',
+        bio: '',
+        interests: interest ? [interest] : [],
+        plan: 'Free',
+        notifyRisk: true,
+        notifyNews: false,
+        avatarUrl: '',
+        avatarColor: 0,
+        joined: new Date()
+      };
+    }
+
+
+    /* ---------------------------------------------------------
+       ĐIỀU HƯỚNG
+       --------------------------------------------------------- */
+    function go(pageId) {
+      /* Chưa đăng nhập thì không vào được hồ sơ; đã đăng nhập thì không cần đăng nhập lại */
+      if (pageId === 'profile' && !user) { pageId = 'login'; }
+      if ((pageId === 'login' || pageId === 'signup') && user) { pageId = 'profile'; }
+
+      document.querySelectorAll('.page').forEach(function (page) {
+        page.classList.toggle('on', page.id === pageId);
+      });
+
+      document.querySelectorAll('.menu a').forEach(function (link) {
+        link.classList.toggle('on', link.dataset.p === pageId);
+      });
+
+      if (pageId === 'profile') { renderProfile(); }
+
+      window.scrollTo(0, 0);
+    }
+
+    /* Đổi menu theo trạng thái đăng nhập */
+    function updateAuthUI() {
+      $('navLogin').hidden = !!user;
+      $('navSignup').hidden = !!user;
+      $('navProfile').hidden = !user;
+      $('navLogout').hidden = !user;
+
+      if (user) {
+        paintAvatar($('navAvatar'), user);
+        $('navName').textContent = firstName(user.name);
+      }
+    }
+
+
+    /* ---------------------------------------------------------
+       ĐĂNG NHẬP / ĐĂNG KÝ / ĐĂNG XUẤT
+       --------------------------------------------------------- */
+    function resetAuthForms() {
+      ['loginForm', 'signupForm', 'pwForm'].forEach(function (id) { $(id).reset(); });
+
+      document.querySelectorAll('.err').forEach(function (el) { el.textContent = ''; });
+      document.querySelectorAll('.invalid').forEach(function (el) { el.classList.remove('invalid'); });
+      $('loginError').hidden = true;
+      $('signupError').hidden = true;
+      showStrength('');
+    }
+
+    function signIn(acc, message) {
+      user = acc;
+      resetAuthForms();
+
+      $('welcome').textContent = message + ' Xin chào, ' + firstName(user.name) + '! (chế độ test, dữ liệu không được lưu)';
+      $('welcome').hidden = false;
+
+      updateAuthUI();
+      go('profile');
+    }
+
+    function signOut() {
+      user = null;
+      $('welcome').hidden = true;
+      updateAuthUI();
+      go('home');
+    }
+
+    bindForm('loginForm', 'loginBtn', function () {
+
+      var email = $('loginEmail').value.trim();
+      var pass = $('loginPass').value;
+      $('loginError').hidden = true;
+
+      var ok = setError('loginEmail', !email ? 'Vui lòng nhập email.' : (isEmail(email) ? '' : 'Email chưa đúng định dạng.'));
+      ok = setError('loginPass', pass ? '' : 'Vui lòng nhập mật khẩu.') && ok;
+      if (!ok) { return; }
+
+      setLoading($('loginBtn'), true, 'Đang đăng nhập...');
+
+      setTimeout(function () {
+        setLoading($('loginBtn'), false, 'Đăng nhập');
+
+        if (account) {
+          /* Đã có tài khoản trong phiên: kiểm tra đúng email và mật khẩu */
+          if (account.email.toLowerCase() !== email.toLowerCase() || account.password !== pass) {
+            showBox('loginError', 'Email hoặc mật khẩu không đúng.');
+            return;
+          }
+        } else {
+          /* Chưa có tài khoản nào: tạo tạm một tài khoản test từ email */
+          if (pass.length < 6) {
+            showBox('loginError', 'Mật khẩu cần ít nhất 6 ký tự (chế độ test).');
+            return;
+          }
+          account = newAccount(nameFromEmail(email), email, pass, '');
+        }
+
+        signIn(account, 'Đăng nhập thành công.');
+      }, 900);
+    });
+
+    bindForm('signupForm', 'signupBtn', function () {
+
+      var name = $('suName').value.trim();
+      var email = $('suEmail').value.trim();
+      var pass = $('suPass').value;
+      var confirm = $('suConfirm').value;
+      $('signupError').hidden = true;
+
+      var ok = setError('suName', name.length >= 2 ? '' : 'Vui lòng nhập họ và tên (ít nhất 2 ký tự).');
+      ok = setError('suEmail', !email ? 'Vui lòng nhập email.' : (isEmail(email) ? '' : 'Email chưa đúng định dạng.')) && ok;
+      ok = setError('suPass', passwordProblem(pass)) && ok;
+      ok = setError('suConfirm', confirm === pass ? '' : 'Mật khẩu nhập lại chưa khớp.') && ok;
+      ok = setError('suTerms', $('suTerms').checked ? '' : 'Bạn cần đồng ý với điều khoản để tiếp tục.') && ok;
+      if (!ok) { return; }
+
+      setLoading($('signupBtn'), true, 'Đang tạo tài khoản...');
+
+      setTimeout(function () {
+        setLoading($('signupBtn'), false, 'Tạo tài khoản');
+
+        if (account && account.email.toLowerCase() === email.toLowerCase()) {
+          showBox('signupError', 'Email này đã được đăng ký trong phiên này. Hãy đăng nhập.');
+          return;
+        }
+
+        account = newAccount(name, email, pass, $('suInterest').value);
+        signIn(account, 'Tạo tài khoản thành công.');
+      }, 1000);
+    });
+
+    $('suPass').addEventListener('input', function () { showStrength(this.value); });
+
+    $('forgot').addEventListener('click', function () { $('forgotMsg').hidden = false; });
+
+    $('navLogout').addEventListener('click', signOut);
+    $('logoutBtn').addEventListener('click', signOut);
+
+
+    /* ---------------------------------------------------------
+       HỒ SƠ (PROFILE)
+       --------------------------------------------------------- */
+    function paintAvatar(el, acc) {
+      var color = AVATAR_COLORS[acc.avatarColor];
+
+      if (acc.avatarUrl) {
+        el.style.backgroundImage = 'url("' + acc.avatarUrl + '")';
+        el.textContent = '';
+      } else {
+        el.style.backgroundImage = color.bg;
+        el.style.color = color.fg;
+        el.textContent = firstName(acc.name).charAt(0).toUpperCase();
+      }
+    }
+
+    function refreshHeader() {
+      paintAvatar($('avatarBig'), user);
+      $('sideName').textContent = user.name;
+      $('sideEmail').textContent = user.email;
+      $('sidePlan').textContent = 'Gói ' + user.plan;
+      $('sideJoined').textContent = 'Thành viên từ ' + user.joined.toLocaleDateString('vi-VN');
+      updateAuthUI();
+    }
+
+    function buildSwatches() {
+      var box = $('swatches');
+      box.innerHTML = '';
+
+      AVATAR_COLORS.forEach(function (color, index) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.style.background = color.bg;
+        btn.className = index === user.avatarColor ? 'on' : '';
+
+        btn.addEventListener('click', function () {
+          if (user.avatarUrl) { URL.revokeObjectURL(user.avatarUrl); }
+          user.avatarUrl = '';
+          user.avatarColor = index;
+          buildSwatches();
+          refreshHeader();
+        });
+
+        box.appendChild(btn);
+      });
+    }
+
+    function renderProfile() {
+      if (!user) { return; }
+
+      refreshHeader();
+      buildSwatches();
+
+      $('pfName').value = user.name;
+      $('pfEmail').value = user.email;
+      $('pfPhone').value = user.phone;
+      $('pfCity').value = user.city;
+      $('pfBio').value = user.bio;
+      $('bioCount').textContent = user.bio.length;
+      $('pfPlan').value = user.plan;
+      $('ntRisk').checked = user.notifyRisk;
+      $('ntNews').checked = user.notifyNews;
+
+      document.querySelectorAll('input[name="interest"]').forEach(function (box) {
+        box.checked = user.interests.indexOf(box.value) > -1;
+      });
+    }
+
+    $('pfBio').addEventListener('input', function () { $('bioCount').textContent = this.value.length; });
+
+    /* Ảnh đại diện: chỉ xem trước trong trình duyệt, không tải lên đâu */
+    $('avatarFile').addEventListener('change', function (e) {
+      var file = e.target.files[0];
+      if (!file) { return; }
+
+      if (file.type.indexOf('image/') !== 0) {
+        showStatus('avatarStatus', 'Vui lòng chọn một tệp ảnh.', true);
+      } else if (file.size > 2 * 1024 * 1024) {
+        showStatus('avatarStatus', 'Ảnh tối đa 2 MB.', true);
+      } else {
+        if (user.avatarUrl) { URL.revokeObjectURL(user.avatarUrl); }
+        user.avatarUrl = URL.createObjectURL(file);
+        refreshHeader();
+        showStatus('avatarStatus', 'Đã đổi ảnh đại diện.');
+      }
+
+      e.target.value = '';
+    });
+
+    $('avatarClear').addEventListener('click', function () {
+      if (user.avatarUrl) { URL.revokeObjectURL(user.avatarUrl); }
+      user.avatarUrl = '';
+      refreshHeader();
+    });
+
+    /* Lưu thông tin cá nhân */
+    bindForm('profileForm', 'profileBtn', function () {
+
+      var name = $('pfName').value.trim();
+      var email = $('pfEmail').value.trim();
+      var phone = $('pfPhone').value.replace(/\s/g, '');
+
+      var ok = setError('pfName', name.length >= 2 ? '' : 'Vui lòng nhập họ và tên (ít nhất 2 ký tự).');
+      ok = setError('pfEmail', isEmail(email) ? '' : 'Email chưa đúng định dạng.') && ok;
+      ok = setError('pfPhone', (!phone || /^(\+84|0)\d{9,10}$/.test(phone)) ? '' : 'Số điện thoại chưa hợp lệ.') && ok;
+      if (!ok) { return; }
+
+      setLoading($('profileBtn'), true, 'Đang lưu...');
+
+      setTimeout(function () {
+        setLoading($('profileBtn'), false, 'Lưu thay đổi');
+
+        user.name = name;
+        user.email = email;
+        user.phone = phone;
+        user.city = $('pfCity').value.trim();
+        user.bio = $('pfBio').value.trim();
+        user.plan = $('pfPlan').value;
+        user.notifyRisk = $('ntRisk').checked;
+        user.notifyNews = $('ntNews').checked;
+        user.interests = [];
+
+        document.querySelectorAll('input[name="interest"]:checked').forEach(function (box) {
+          user.interests.push(box.value);
+        });
+
+        refreshHeader();
+        showStatus('infoStatus', 'Đã lưu thay đổi.');
+      }, 600);
+    });
+
+    /* Đổi mật khẩu */
+    bindForm('pwForm', 'pwBtn', function () {
+
+      var current = $('pwCurrent').value;
+      var next = $('pwNew').value;
+      var confirm = $('pwConfirm').value;
+
+      var ok = setError('pwCurrent', current === user.password ? '' : 'Mật khẩu hiện tại chưa đúng.');
+      var problem = passwordProblem(next) || (next === current ? 'Mật khẩu mới cần khác mật khẩu cũ.' : '');
+      ok = setError('pwNew', problem) && ok;
+      ok = setError('pwConfirm', confirm === next ? '' : 'Mật khẩu nhập lại chưa khớp.') && ok;
+      if (!ok) { return; }
+
+      setLoading($('pwBtn'), true, 'Đang cập nhật...');
+
+      setTimeout(function () {
+        setLoading($('pwBtn'), false, 'Cập nhật mật khẩu');
+        user.password = next;
+        $('pwForm').reset();
+        showStatus('pwStatus', 'Đã đổi mật khẩu.');
+      }, 700);
+    });
+
+    /* Xóa tài khoản: hỏi xác nhận ngay trên trang (không dùng hộp thoại của trình duyệt) */
+    $('deleteAsk').addEventListener('click', function () { $('deleteConfirm').hidden = false; });
+    $('deleteNo').addEventListener('click', function () { $('deleteConfirm').hidden = true; });
+
+    $('deleteYes').addEventListener('click', function () {
+      if (user.avatarUrl) { URL.revokeObjectURL(user.avatarUrl); }
+      account = null;
+      $('deleteConfirm').hidden = true;
+      signOut();
+    });
+
+
+    /* ---------------------------------------------------------
+       TRANG GIAO DỊCH: đi từng bước, mọi kết quả đều tính từ dữ liệu người dùng nhập
+       --------------------------------------------------------- */
+
+    /* ---------------------------------------------------------
+       DỮ LIỆU MẪU: 1.000 khách, tạo bằng bộ sinh số ngẫu nhiên cố định
+       (chạy lại luôn ra cùng một kết quả). Đây là dữ liệu mô phỏng.
+       --------------------------------------------------------- */
+    function buildDataset() {
+      var seed = 20261003;
+
+      function rand() {
+        seed |= 0;
+        seed = (seed + 0x6D2B79F5) | 0;
+        var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      }
+
+      function int(a, b) { return a + Math.floor(rand() * (b - a + 1)); }
+      function pick(list) { return list[Math.floor(rand() * list.length)]; }
+      function chance(p) { return rand() < p; }
+
+      function shuffle(list) {
+        for (var i = list.length - 1; i > 0; i--) {
+          var j = Math.floor(rand() * (i + 1));
+          var tmp = list[i];
+          list[i] = list[j];
+          list[j] = tmp;
+        }
+        return list;
+      }
+
+      function digits(n) {
+        var s = String(int(1, 9));
+        while (s.length < n) { s += int(0, 9); }
+        return s;
+      }
+
+      function plainText(t) {
+        return t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+      }
+
+      function round10k(n) { return Math.round(n / 10000) * 10000; }
+      function pad(n, size) { var s = String(n); while (s.length < size) { s = '0' + s; } return s; }
+
+      /* ----- Kho chữ ----- */
+      var LAST = ['Nguyễn', 'Trần', 'Lê', 'Phạm', 'Hoàng', 'Huỳnh', 'Phan', 'Vũ', 'Võ', 'Đặng', 'Bùi', 'Đỗ', 'Hồ', 'Ngô', 'Dương', 'Lý'];
+      var MID = ['Văn', 'Thị', 'Minh', 'Quốc', 'Thanh', 'Ngọc', 'Gia', 'Anh', 'Khánh', 'Hữu'];
+      var FIRST = ['An', 'Bình', 'Châu', 'Dũng', 'Hà', 'Hạnh', 'Hiếu', 'Khoa', 'Lan', 'Linh', 'Long', 'Mai', 'Nam', 'Ngân', 'Phát', 'Phúc', 'Quân', 'Quyên', 'Sơn', 'Thảo', 'Trang', 'Trinh', 'Tuấn', 'Uyên', 'Vy', 'Yến'];
+
+      var PRODUCTS = [
+        ['Figure limited 1/7', 1200000, 6500000],
+        ['Album kèm photocard bản giới hạn', 350000, 1800000],
+        ['Lightstick đời đầu', 600000, 2500000],
+        ['Áo merch concert', 250000, 900000],
+        ['Giày sneaker sold out', 2500000, 9000000],
+        ['Máy ảnh film cũ', 1500000, 7500000],
+        ['Poster có chữ ký', 400000, 3000000],
+        ['Hộp mù phiên bản hiếm', 150000, 1200000],
+        ['Máy chơi game retro', 1800000, 6000000],
+        ['Đồng hồ vintage', 3000000, 12000000]
+      ];
+
+      var CHAT_OK = [
+        'Mình ship COD được nhé, hàng đẹp như hình.',
+        'Bạn cọc 30% giữ hàng, nhận hàng kiểm tra rồi chuyển nốt nha.',
+        'Hàng mình mua từ năm ngoái, còn đủ hộp và phụ kiện.',
+        'Mình gửi thêm video sản phẩm hôm nay cho bạn xem nhé.',
+        'Bạn có thể gặp mặt xem hàng trực tiếp ở quận 1 hoặc quận 3.'
+      ];
+      var CHAT_MILD = [
+        'Bạn ck trước giúp mình, nhận được tiền mình gửi ngay.',
+        'Hàng hiếm nên mình chỉ nhận chuyển khoản, ship trong 2 ngày.',
+        'Mình có nhiều người hỏi, bạn chốt sớm giúp mình nhé.'
+      ];
+      var CHAT_RED = [
+        'Bạn ck trước giúp mình, bán gấp hôm nay chỉ còn 1 cái, nhắn zalo nhé.',
+        'Mình không nhận COD, chuyển khoản trước ship trong ngày.',
+        'Giảm sâu hôm nay thôi, chốt gấp kẻo hết, inbox riêng cho mình.',
+        'Cần gấp tiền nên bán rẻ, bạn chuyển trước mình gửi liền, không gặp mặt được nhé.',
+        'Mình không ship COD, chuyển khoản trước rồi mình gửi mã vận đơn.',
+        'Chỉ còn 1 bộ, ai ck trước được trước, nhắn telegram mình gửi thêm ảnh.'
+      ];
+
+      var INCIDENTS = [
+        'Người bán không giao hàng',
+        'Hàng nhận được sai với mô tả',
+        'Người bán chặn liên lạc',
+        'Bài đăng hoặc tài khoản người bán bị xóa'
+      ];
+
+      var SCENARIOS = {
+        ok_trust: 'Uy tín, nhận hàng đúng',
+        ok_mid: 'Rủi ro trung bình, nhận hàng đúng',
+        nopay: 'Đáng ngờ, chưa chuyển tiền',
+        pending: 'Đã chuyển tiền, đang chờ hàng',
+        late: 'Không nhận được hàng (Scam SOS)',
+        issue: 'Hàng có vấn đề (Scam SOS)',
+        ring: 'Nhóm lừa đảo nhiều nạn nhân',
+        newseller: 'Người bán mới, chưa có dữ liệu'
+      };
+
+      /* ----- Tên, tài khoản, số điện thoại ----- */
+      function person() { return pick(LAST) + ' ' + pick(MID) + ' ' + pick(FIRST); }
+      function bank(name) { return plainText(name).toUpperCase(); }
+      function phone() { return '0' + pick(['90', '91', '93', '97', '98', '86', '88', '70', '77']) + digits(7); }
+
+      var usedHandles = { 'shop.sutap': true, 'minh.collectibles': true };
+
+      function uniqueHandle(base) {
+        var h = base;
+        var n = 2;
+        while (usedHandles[h]) { h = base + n; n++; }
+        usedHandles[h] = true;
+        return h;
+      }
+
+      var SHOP_A = ['shop', 'kho', 'store', 'hub', 'corner', 'lab', 'club', 'garage'];
+      var SHOP_B = ['dosuutam', 'hanghiem', 'figure', 'kpop', 'sneaker', 'retro', 'vintage', 'photocard', 'merch', 'limited', 'cuxinh'];
+
+      function shopHandle() { return uniqueHandle(pick(SHOP_B) + '.' + pick(SHOP_A)); }
+
+      function nameHandle(name) {
+        var parts = plainText(name).toLowerCase().split(' ');
+        return uniqueHandle(parts.slice(-2).join('.') + '.' + pick(['shop', 'store', 'sale']));
+      }
+
+      function scamHandle() {
+        return uniqueHandle(pick(['sale', 'giare', 'hangsi', 'sieusale', 'flash', 'xakho', 'thanhly']) + '.' +
+          pick(['limited', '24h', 'banngay', 'chinhhang', 'uytin', 'official']) + int(10, 99));
+      }
+
+      /* ----- Lịch sử người bán có sẵn (trước dữ liệu mẫu) ----- */
+      var sellers = {};
+
+      function addSeller(handle, completed, buyers, unresolved) {
+        sellers[handle] = { completed: completed, buyers: buyers, unresolved: unresolved };
+      }
+
+      function makeSeller(kind) {
+        var owner = person();
+        var handle = chance(0.4) ? nameHandle(owner) : shopHandle();
+        var s = { handle: handle, holder: bank(owner), acc: digits(int(10, 12)), phone: chance(0.7) ? phone() : '' };
+        var c = kind === 'trust' ? int(20, 90) : int(2, 14);
+
+        addSeller(handle, c, Math.max(1, Math.round(c * (0.7 + rand() * 0.25))), int(0, 2));
+        return s;
+      }
+
+      addSeller('shop.sutap', 48, 41, 1);
+      addSeller('minh.collectibles', 3, 3, 3);
+
+      var trust = [{ handle: 'shop.sutap', holder: 'LE THI SUTAP', acc: digits(11), phone: phone() }];
+      var mid = [];
+      var i;
+      for (i = 0; i < 27; i++) { trust.push(makeSeller('trust')); }
+      for (i = 0; i < 30; i++) { mid.push(makeSeller('mid')); }
+
+      /* ----- Hàm dựng một khách ----- */
+      var rows = [];
+
+      function newRow(scen) {
+        var p = pick(PRODUCTS);
+        return {
+          code: '', name: person(), scen: scen,
+          handle: '', platform: pick(['Facebook', 'Facebook', 'Facebook', 'Instagram', 'Threads']),
+          holder: '', acc: '', phone: '', age: 'unknown',
+          item: p[0], price: round10k(int(p[1], p[2])), ref: 0,
+          pay: 'cod', days: int(1, 4), chat: '', imgs: int(0, 3),
+          paid: true, hours: 0, outcome: '', incident: '', reported: false, ring: ''
+        };
+      }
+
+      function setRef(r, lo, hi, p) {
+        r.ref = chance(p) ? round10k(r.price * (lo + rand() * (hi - lo))) : 0;
+      }
+
+      function pickPay(wCod, wDeposit) {
+        var x = rand();
+        return x < wCod ? 'cod' : (x < wCod + wDeposit ? 'deposit' : 'prepay');
+      }
+
+      function useSeller(r, s) {
+        r.handle = s.handle;
+        r.holder = s.holder;
+        r.acc = s.acc;
+        r.phone = s.phone;
+      }
+
+      function scamLook(r) {
+        r.age = pick(['lt1', 'lt1', 'm1to6', 'unknown']);
+        r.pay = chance(0.85) ? 'prepay' : 'deposit';
+        r.chat = chance(0.8) ? pick(CHAT_RED) : pick(CHAT_MILD);
+        setRef(r, 1.7, 3.2, 0.75);
+        r.imgs = int(0, 3);
+      }
+
+      /* 1. Uy tín, nhận hàng đúng (300) */
+      for (i = 0; i < 300; i++) {
+        var a = newRow('ok_trust');
+        useSeller(a, pick(trust));
+        a.age = chance(0.6) ? 'gt24' : 'm6to24';
+        a.pay = pickPay(0.45, 0.4);
+        a.chat = pick(CHAT_OK);
+        setRef(a, 1.0, 1.15, 0.8);
+        a.imgs = int(2, 5);
+        a.hours = a.days * 24 + int(2, 72);
+        a.outcome = 'ok';
+        rows.push(a);
+      }
+
+      /* 2. Rủi ro trung bình, nhận hàng đúng (150) */
+      for (i = 0; i < 150; i++) {
+        var b = newRow('ok_mid');
+        useSeller(b, pick(mid));
+        b.age = pick(['m1to6', 'm6to24', 'm6to24', 'unknown']);
+        b.pay = pickPay(0.2, 0.3);
+        b.chat = chance(0.5) ? pick(CHAT_MILD) : pick(CHAT_OK);
+        setRef(b, 1.0, 1.25, 0.6);
+        b.hours = b.days * 24 + int(2, 72);
+        b.outcome = 'ok';
+        rows.push(b);
+      }
+
+      /* 3. Nhóm lừa đảo nhiều nạn nhân (150): nhóm đầu tiên dùng số 0123456789 */
+      var rings = [];
+      var left = 150;
+      rings.push({ size: 6, acc: '0123456789', phone: '0901000111', holder: 'NGUYEN VAN MINH', handles: ['minh.collectibles'] });
+      left -= 6;
+
+      while (left > 0) {
+        var size = Math.min(int(3, 8), left);
+        if (left - size > 0 && left - size < 3) { size = left; }
+        rings.push({
+          size: size, acc: digits(int(10, 12)), phone: phone(), holder: bank(person()),
+          handles: [scamHandle(), scamHandle(), scamHandle()].slice(0, int(1, 3))
+        });
+        left -= size;
+      }
+
+      rings.forEach(function (ring, index) {
+        ring.id = 'NHOM-' + pad(index + 1, 2);
+        ring.acc2 = digits(int(10, 12));
+
+        ring.handles.forEach(function (h) {
+          if (h !== 'minh.collectibles') { addSeller(h, int(0, 2), int(0, 2), int(3, 9)); }
+        });
+
+        for (var k = 0; k < ring.size; k++) {
+          var c = newRow('ring');
+          scamLook(c);
+          c.handle = pick(ring.handles);
+          c.holder = ring.holder;
+          c.acc = chance(0.9) ? ring.acc : ring.acc2;
+          c.phone = chance(0.65) ? ring.phone : (chance(0.5) ? phone() : '');
+          c.days = int(1, 5);
+          c.hours = (c.days + int(1, 12)) * 24 + int(0, 20);
+          c.outcome = chance(0.7) ? 'late' : 'issue';
+          c.incident = c.outcome === 'late' ? pick([INCIDENTS[0], INCIDENTS[2], INCIDENTS[3]]) : INCIDENTS[1];
+          c.reported = true;
+          c.ring = ring.id;
+          rows.push(c);
+        }
+      });
+
+      /* 4. Đáng ngờ, chưa chuyển tiền (100): một phần dùng lại số tài khoản của nhóm lừa đảo */
+      for (i = 0; i < 100; i++) {
+        var d = newRow('nopay');
+        scamLook(d);
+        d.handle = scamHandle();
+        d.holder = bank(person());
+        d.acc = chance(0.4) ? pick(rings).acc : digits(int(10, 12));
+        d.phone = chance(0.5) ? phone() : '';
+        d.paid = false;
+        rows.push(d);
+      }
+
+      /* 5. Đã chuyển tiền, đang chờ hàng (70) */
+      for (i = 0; i < 70; i++) {
+        var e = newRow('pending');
+        useSeller(e, pick(chance(0.6) ? trust : mid));
+        e.age = pick(['m6to24', 'gt24', 'm1to6']);
+        e.pay = pickPay(0.1, 0.3);
+        e.chat = pick(CHAT_OK.concat(CHAT_MILD));
+        setRef(e, 1.0, 1.2, 0.6);
+        e.days = int(3, 10);
+        e.hours = int(2, e.days * 24 - 6);
+        rows.push(e);
+      }
+
+      /* 6. Không nhận được hàng, riêng lẻ (100) */
+      for (i = 0; i < 100; i++) {
+        var f = newRow('late');
+        scamLook(f);
+        f.handle = chance(0.5) ? scamHandle() : shopHandle();
+        f.holder = bank(person());
+        f.acc = digits(int(10, 12));
+        f.phone = chance(0.6) ? phone() : '';
+        f.days = int(1, 5);
+        f.hours = (f.days + int(1, 12)) * 24 + int(0, 20);
+        f.outcome = 'late';
+        f.incident = pick([INCIDENTS[0], INCIDENTS[2], INCIDENTS[3]]);
+        f.reported = chance(0.7);
+        addSeller(f.handle, int(0, 2), int(0, 2), int(1, 2));
+        rows.push(f);
+      }
+
+      /* 7. Hàng có vấn đề, riêng lẻ (60) */
+      for (i = 0; i < 60; i++) {
+        var g = newRow('issue');
+        g.handle = shopHandle();
+        g.holder = bank(person());
+        g.acc = digits(int(10, 12));
+        g.phone = chance(0.6) ? phone() : '';
+        g.age = pick(['m1to6', 'm6to24', 'unknown']);
+        g.pay = pickPay(0.1, 0.4);
+        g.chat = pick(CHAT_MILD.concat(CHAT_OK));
+        setRef(g, 1.0, 1.4, 0.6);
+        g.days = int(1, 5);
+        g.hours = g.days * 24 + int(4, 96);
+        g.outcome = 'issue';
+        g.incident = INCIDENTS[1];
+        g.reported = chance(0.4);
+        addSeller(g.handle, int(1, 6), int(1, 5), int(1, 2));
+        rows.push(g);
+      }
+
+      /* 8. Người bán mới, chưa có dữ liệu (70) */
+      for (i = 0; i < 70; i++) {
+        var h = newRow('newseller');
+        h.handle = shopHandle();
+        h.holder = bank(person());
+        h.acc = digits(int(10, 12));
+        h.phone = chance(0.5) ? phone() : '';
+        h.age = pick(['lt1', 'unknown', 'm1to6']);
+        h.pay = pickPay(0.3, 0.4);
+        h.chat = pick(CHAT_OK.concat(CHAT_MILD));
+        setRef(h, 1.0, 1.3, 0.5);
+
+        var x = rand();
+        if (x < 0.6) {
+          h.hours = h.days * 24 + int(2, 72);
+          h.outcome = 'ok';
+        } else if (x < 0.8) {
+          h.days = int(3, 10);
+          h.hours = int(2, h.days * 24 - 6);
+        } else {
+          h.paid = false;
+        }
+        rows.push(h);
+      }
+
+      /* ----- Đánh mã khách theo thứ tự đã xáo trộn ----- */
+      shuffle(rows);
+
+      var reports = [];
+      rows.forEach(function (r, index) {
+        r.code = 'KH' + pad(index + 1, 4);
+
+        if (r.reported) {
+          reports.push({ id: 'SP-' + r.code, account: r.acc, phone: r.phone, seller: r.handle, victims: 1, loss: r.price });
+        }
+      });
+
+      return { customers: rows, sellers: sellers, reports: reports, scenarios: SCENARIOS, incidents: INCIDENTS };
+    }
+
+    var DATA = buildDataset();
+    var REPORTS = DATA.reports;        /* các vụ việc đã được báo cáo */
+    var SELLERS = DATA.sellers;        /* lịch sử người bán có sẵn */
+    var CUSTOMERS = DATA.customers;    /* 1.000 khách mẫu */
+    var SCENARIOS = DATA.scenarios;
+
+    /* ----- Bảng điểm rủi ro ----- */
+    var AGE_LABEL = { lt1: 'Dưới 1 tháng', m1to6: '1 đến 6 tháng', m6to24: '6 đến 24 tháng', gt24: 'Trên 24 tháng', unknown: 'Không rõ' };
+    var AGE_POINTS = { lt1: 20, m1to6: 10, m6to24: 3, gt24: 0, unknown: 12 };
+    var PAY_LABEL = { prepay: 'Chuyển khoản trước toàn bộ', deposit: 'Đặt cọc một phần', cod: 'COD hoặc gặp mặt' };
+    var PAY_POINTS = { prepay: 15, deposit: 7, cod: 0 };
+
+    /* Cụm từ đáng chú ý trong chat: [dạng không dấu để so khớp, dạng hiển thị] */
+    var KEYWORDS = [
+      ['ban gap', 'bán gấp'], ['can gap', 'cần gấp'], ['chot gap', 'chốt gấp'], ['hom nay', 'hôm nay'],
+      ['chi con', 'chỉ còn'], ['giam sau', 'giảm sâu'], ['zalo', 'zalo'], ['telegram', 'telegram'],
+      ['whatsapp', 'whatsapp'], ['inbox rieng', 'inbox riêng'], ['khong nhan cod', 'không nhận COD'],
+      ['khong ship cod', 'không ship COD'], ['khong gap mat', 'không gặp mặt'],
+      ['ck truoc', 'ck trước'], ['chuyen truoc', 'chuyển trước'], ['chuyen khoan truoc', 'chuyển khoản trước']
+    ];
+
+    var deal = null;          /* giao dịch đang làm */
+    var currentSample = null; /* khách mẫu đang dùng (nếu có) */
+    var reached = [];         /* reached[i] = true nếu bước i đã được mở khóa */
+    var curStep = 1;
+    var buyerSeen = {};       /* người bán nào bạn đã có giao dịch trong phiên này */
+    var scoreTimer;
+
+
+    /* ----- Hàm tiện ích ----- */
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function plain(text) {
+      return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
+    }
+
+    function esc(text) {
+      return String(text).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    function vnd(n) { return Math.round(n).toLocaleString('vi-VN') + 'đ'; }
+    function fmtDate(d) { return d.toLocaleDateString('vi-VN'); }
+    function fmtTime(d) { return d.toLocaleString('vi-VN'); }
+
+    function localInputValue(d) {
+      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+
+    /* Đọc số tiền: chấp nhận 3500000 hoặc 3.500.000, trả về NaN nếu sai */
+    function parseMoney(text) {
+      var s = text.replace(/[.,\s]/g, '');
+      return /^\d+$/.test(s) ? Number(s) : NaN;
+    }
+
+    function normPhone(text) { return text.replace(/\s/g, '').replace(/^\+84/, '0'); }
+
+    function sellerKey(text) {
+      return text.trim().toLowerCase().replace(/^https?:\/\/[^\/]+\//, '').replace(/^@/, '').replace(/\/+$/, '');
+    }
+
+    function hash(text) {
+      var h = 5381;
+      for (var i = 0; i < text.length; i++) { h = ((h << 5) + h + text.charCodeAt(i)) >>> 0; }
+      return ('00000000' + h.toString(16)).slice(-8).toUpperCase();
+    }
+
+    function radioValue(name) {
+      var el = document.querySelector('input[name="' + name + '"]:checked');
+      return el ? el.value : '';
+    }
+
+    function tokens(text) {
+      return plain(text).split(/[^a-z0-9]+/).filter(function (t) { return t.length >= 2; });
+    }
+
+    /* Độ giống nhau giữa hai nhóm từ: số từ chung / số từ khác nhau tổng cộng */
+    function similarity(a, b) {
+      var setA = {}, setB = {}, all = {}, common = 0;
+      a.forEach(function (t) { setA[t] = true; all[t] = true; });
+      b.forEach(function (t) { setB[t] = true; all[t] = true; });
+      Object.keys(setA).forEach(function (t) { if (setB[t]) { common++; } });
+      var union = Object.keys(all).length;
+      return { common: common, union: union, ratio: union ? common / union : 0 };
+    }
+
+    function ensureSeller(key) {
+      if (!SELLERS[key]) { SELLERS[key] = { completed: 0, buyers: 0, unresolved: 0 }; }
+      return SELLERS[key];
+    }
+
+    function rateOf(s) {
+      var total = s.completed + s.unresolved;
+      return total ? Math.round(s.completed / total * 100) : null;
+    }
+
+    function matchReports(d) {
+      var found = [];
+
+      REPORTS.forEach(function (r) {
+        if (r.id === d.id) { return; }
+
+        var keys = [];
+        if (r.account && r.account === d.acc) { keys.push('Số tài khoản'); }
+        if (r.phone && d.phone && r.phone === d.phone) { keys.push('Số điện thoại'); }
+        if (r.seller === d.sellerKey) { keys.push('Tài khoản mạng xã hội'); }
+
+        if (keys.length) { found.push({ report: r, keys: keys }); }
+      });
+
+      return found;
+    }
+
+
+    /* ----- Điều hướng giữa các bước ----- */
+    function renderSteps() {
+      document.querySelectorAll('#steps button').forEach(function (btn) {
+        var i = Number(btn.dataset.s);
+        btn.disabled = !reached[i];
+        btn.classList.toggle('on', i === curStep);
+        btn.classList.toggle('done', !!reached[i] && i !== curStep);
+      });
+    }
+
+    function showStep(n) {
+      curStep = n;
+      reached[n] = true;
+
+      document.querySelectorAll('#deal .step').forEach(function (panel) {
+        panel.classList.toggle('on', panel.id === 's' + n);
+      });
+
+      $('samplePanel').hidden = n !== 1;
+      renderSteps();
+      window.scrollTo(0, 0);
+    }
+
+    /* Mở lại một bước đã mở khóa (vẽ lại nội dung theo dữ liệu hiện có) */
+    function goStep(n) {
+      if (n === 2) { renderRisk(); }
+      if (n === 3) { renderVault(); }
+      if (n === 4) { renderHistory(); }
+      if (n === 5) { renderSos(); }
+      if (n === 6) { renderRelated(); }
+      showStep(n);
+    }
+
+    function resetDeal() {
+      deal = null;
+      currentSample = null;
+      reached = [false, true];
+      $('smStatus').hidden = true;
+
+      ['s1', 's3', 'sosForm', 'outForm'].forEach(function (id) { $(id).reset(); });
+      document.querySelectorAll('#deal .err').forEach(function (el) { el.textContent = ''; });
+      document.querySelectorAll('#deal .invalid').forEach(function (el) { el.classList.remove('invalid'); });
+
+      $('dError').hidden = true;
+      $('vError').hidden = true;
+      $('vPayBox').hidden = true;
+      $('sosForm').hidden = false;
+      $('sosResult').hidden = true;
+      $('doneBox').hidden = true;
+
+      showStep(1);
+    }
+
+
+    /* ----- Bước 1: Create Deal ----- */
+    function validateDeal() {
+      var v = {
+        seller: $('dSeller').value.trim(),
+        holder: $('dHolder').value.trim(),
+        acc: $('dAcc').value.replace(/\s/g, ''),
+        phone: normPhone($('dPhone').value),
+        age: $('dAge').value,
+        item: $('dItem').value.trim(),
+        price: parseMoney($('dPrice').value),
+        refText: $('dRef').value.trim(),
+        pay: $('dPay').value,
+        days: Number($('dDays').value.trim()),
+        daysText: $('dDays').value.trim()
+      };
+      v.ref = v.refText ? parseMoney(v.refText) : 0;
+
+      var ok = setError('dSeller', v.seller.length >= 3 ? '' : 'Vui lòng nhập tài khoản mạng xã hội của người bán.');
+      ok = setError('dHolder', v.holder.length >= 2 ? '' : 'Vui lòng nhập tên chủ tài khoản ngân hàng.') && ok;
+      ok = setError('dAcc', /^\d{6,19}$/.test(v.acc) ? '' : 'Số tài khoản gồm 6 đến 19 chữ số.') && ok;
+      ok = setError('dPhone', (!v.phone || /^0\d{9,10}$/.test(v.phone)) ? '' : 'Số điện thoại chưa hợp lệ.') && ok;
+      ok = setError('dAge', v.age ? '' : 'Vui lòng chọn.') && ok;
+      ok = setError('dItem', v.item.length >= 2 ? '' : 'Vui lòng nhập tên sản phẩm.') && ok;
+      ok = setError('dPrice', v.price >= 1000 ? '' : 'Giá chưa hợp lệ (nhập số, tối thiểu 1.000).') && ok;
+      ok = setError('dRef', (!v.refText || v.ref > 0) ? '' : 'Giá tham khảo chưa hợp lệ.') && ok;
+      ok = setError('dPay', v.pay ? '' : 'Vui lòng chọn.') && ok;
+      ok = setError('dDays', (/^\d+$/.test(v.daysText) && v.days >= 1 && v.days <= 60) ? '' : 'Nhập số ngày từ 1 đến 60.') && ok;
+
+      return ok ? v : null;
+    }
+
+    /* Tính điểm rủi ro: mỗi yếu tố là một phép tính rõ ràng */
+    function computeRisk(d) {
+      var items = [];
+
+      function add(label, calc, pts, tip) {
+        items.push({ label: label, calc: calc, pts: pts, tip: tip || '' });
+      }
+
+      /* 1. Tuổi tài khoản */
+      add('Độ mới của tài khoản người bán', AGE_LABEL[d.age], AGE_POINTS[d.age],
+        'Tài khoản còn mới: nên xin video ngắn sản phẩm kèm ghi chú ngày hôm nay.');
+
+      /* 2. Hình thức thanh toán */
+      add('Hình thức thanh toán', PAY_LABEL[d.pay], PAY_POINTS[d.pay],
+        'Đề nghị nhận COD, gặp mặt hoặc chỉ đặt cọc một phần.');
+
+      /* 3. Mức giảm so với giá tham khảo: (giá tham khảo − giá bán) / giá tham khảo */
+      if (d.ref > 0) {
+        var discount = (d.ref - d.price) / d.ref * 100;
+        var discPts = discount >= 50 ? 25 : (discount >= 30 ? 15 : (discount >= 15 ? 6 : 0));
+        add('Giá so với thị trường',
+          discount > 0 ? 'Thấp hơn ' + Math.round(discount) + '% (' + vnd(d.price) + ' so với ' + vnd(d.ref) + ')' : 'Không thấp hơn giá tham khảo',
+          discPts, 'Giá thấp bất thường: đối chiếu thêm giá ở nhiều nơi trước khi chuyển tiền.');
+      } else {
+        add('Giá so với thị trường', 'Chưa nhập giá tham khảo, bỏ qua', 0);
+      }
+
+      /* 4. Giá trị giao dịch (mức thiệt hại nếu có sự cố) */
+      add('Giá trị giao dịch', vnd(d.price), d.price >= 5000000 ? 8 : (d.price >= 2000000 ? 4 : 0),
+        'Giá trị lớn: cân nhắc chia nhỏ thanh toán hoặc dùng bên trung gian.');
+
+      /* 5. Tên chủ tài khoản so với tên người bán */
+      var sim = similarity(tokens(d.holder), tokens(d.sellerKey));
+      add('Tên chủ tài khoản và tên người bán',
+        'Trùng ' + sim.common + '/' + sim.union + ' từ (' + Math.round(sim.ratio * 100) + '%)',
+        sim.ratio < 0.2 ? 10 : 0,
+        'Hỏi người bán vì sao tên chủ tài khoản khác tên trang bán.');
+
+      /* 6. Nội dung chat: mỗi cụm từ đáng chú ý +5 điểm, tối đa 15 */
+      var chatPlain = plain(d.chat);
+      var hits = KEYWORDS.filter(function (k) { return chatPlain.indexOf(k[0]) > -1; }).map(function (k) { return k[1]; });
+      add('Nội dung trò chuyện',
+        hits.length ? 'Có ' + hits.length + ' cụm đáng chú ý: ' + hits.join(', ') : (d.chat ? 'Không thấy cụm từ đáng chú ý' : 'Chưa nhập nội dung trò chuyện'),
+        Math.min(15, hits.length * 5),
+        'Chat có dấu hiệu thúc ép hoặc chuyển kênh: đừng vội chuyển tiền.');
+
+      /* 7. Vụ việc đã bị báo cáo trùng: mỗi vụ +12 điểm, tối đa 36 */
+      var matches = matchReports(d);
+      add('Đã bị báo cáo trong dữ liệu',
+        matches.length ? matches.length + ' vụ trùng: ' + matches.map(function (m) { return m.report.id; }).join(', ') : 'Không có vụ trùng',
+        Math.min(36, matches.length * 12),
+        'Thông tin này đã xuất hiện trong báo cáo: nên tránh giao dịch.');
+
+      /* 8 và 9. Lịch sử giao dịch đã xác nhận của người bán */
+      var s = SELLERS[d.sellerKey] || { completed: 0, buyers: 0, unresolved: 0 };
+      var c = s.completed;
+      add('Lịch sử giao dịch đã xác nhận', c + ' giao dịch hoàn thành',
+        c >= 20 ? -15 : (c >= 5 ? -8 : (c >= 1 ? -3 : 8)),
+        'Người bán chưa có lịch sử xác nhận trên ShieldPay.');
+      add('Vụ việc chưa giải quyết', s.unresolved + ' vụ', Math.min(15, s.unresolved * 5),
+        'Người bán còn nhiều vụ việc chưa giải quyết.');
+
+      var raw = items.reduce(function (sum, it) { return sum + it.pts; }, 0);
+      var score = Math.max(0, Math.min(100, raw));
+
+      return {
+        items: items,
+        raw: raw,
+        score: score,
+        level: score >= 60 ? 'high' : (score >= 30 ? 'mid' : 'low'),
+        exposure: d.price * score / 100
+      };
+    }
+
+    bindForm('s1', 'dBtn', function () {
+      $('dError').hidden = true;
+
+      var v = validateDeal();
+      if (!v) { return; }
+
+      setLoading($('dBtn'), true, 'Đang phân tích...');
+
+      setTimeout(function () {
+        setLoading($('dBtn'), false, 'Kiểm tra rủi ro →');
+
+        var now = new Date();
+        var fileNames = [];
+        Array.prototype.forEach.call($('dFiles').files, function (f) { fileNames.push(f.name); });
+
+        deal = {
+          seller: v.seller, platform: $('dPlatform').value, holder: v.holder, acc: v.acc, phone: v.phone,
+          age: v.age, item: v.item, price: v.price, ref: v.ref, pay: v.pay, days: v.days,
+          chat: $('dChat').value.trim(), fileNames: fileNames,
+          sellerKey: sellerKey(v.seller),
+          createdAt: now,
+          deadline: new Date(now.getTime() + v.days * 86400000),
+          paid: false, paidAmount: 0, paidAt: null, post: '', extraFiles: 0, fingerprint: '',
+          outcome: '', reported: false, sosDone: false, sosType: '', sampleFiles: 0
+        };
+
+        deal.id = 'SP-' + String(now.getFullYear()).slice(2) + pad(now.getMonth() + 1) + pad(now.getDate()) +
+          '-' + hash(deal.seller + deal.acc + deal.price + now.getTime()).slice(0, 4);
+        if (currentSample) { applySampleToDeal(deal, currentSample); }
+        deal.risk = computeRisk(deal);
+
+        reached = [false, true];   /* sửa bước 1 thì các bước sau phải tính lại */
+        if (currentSample) { prefillFromSample(currentSample); }
+        renderRisk();
+        showStep(2);
+      }, 900);
+    });
+
+
+    /* ----- Bước 2: Risk Check ----- */
+    function renderRisk() {
+      var d = deal;
+      var r = d.risk;
+
+      $('riskSummary').textContent = 'Người bán ' + d.seller + ' (' + d.platform + ') · TK ' + d.acc + ' (' + d.holder + ') · ' + d.item + ' · ' + vnd(d.price);
+
+      var levelText = {
+        high: 'Cao, nên cân nhắc kỹ trước khi chuyển tiền',
+        mid: 'Trung bình, nên kiểm tra thêm trước khi chuyển tiền',
+        low: 'Thấp, nhưng vẫn nên lưu hồ sơ trước khi chuyển tiền'
+      };
+      var levelColor = { high: 'var(--bad)', mid: 'var(--warn)', low: 'var(--ok)' };
+
+      $('riskLevel').textContent = 'Mức cảnh báo: ' + levelText[r.level];
+      $('score').style.color = levelColor[r.level];
+
+      var rows = '';
+      r.items.forEach(function (it) {
+        var cls = it.pts >= 10 ? 'bad' : (it.pts > 0 ? 'warn' : 'ok');
+        var sign = it.pts > 0 ? '+' + it.pts : (it.pts < 0 ? '−' + Math.abs(it.pts) : '0');
+
+        rows += '<div class="flag"><i class="dot ' + cls + '"></i><div>' +
+          '<b style="display: inline; margin: 0; font-size: 14px;">' + esc(it.label) + '</b> ' +
+          '<span class="muted">· ' + esc(it.calc) + '</span> ' +
+          '<strong>' + sign + ' điểm</strong></div></div>';
+      });
+      $('riskRows').innerHTML = rows;
+
+      var parts = r.items.map(function (it, i) {
+        if (i === 0) { return String(it.pts); }
+        return it.pts < 0 ? '− ' + Math.abs(it.pts) : '+ ' + it.pts;
+      });
+      $('riskFormula').textContent = 'Cách tính: ' + parts.join(' ') + ' = ' + r.raw +
+        (r.raw !== r.score ? ' (giới hạn trong khoảng 0 đến 100 nên còn ' + r.score + ')' : '') +
+        '. Điểm càng cao, rủi ro càng lớn.';
+
+      $('riskExposure').innerHTML = 'Giá trị rủi ro ước tính: ' + vnd(d.price) + ' × ' + r.score + '% = <strong>' +
+        vnd(r.exposure) + '</strong> <span class="muted">(chỉ để tham khảo)</span>';
+
+      var tips = r.items.filter(function (it) { return it.pts >= 8 && it.tip; });
+      $('riskTips').innerHTML = tips.length
+        ? '<ul class="tips"><li>' + tips.map(function (it) { return esc(it.tip); }).join('</li><li>') + '</li></ul>'
+        : '<span class="muted" style="font-size: 14px;">Chưa có dấu hiệu nổi bật cần xử lý thêm.</span>';
+
+      /* Hiệu ứng đếm điểm */
+      var shown = 0;
+      $('bar').style.width = '0';
+      setTimeout(function () { $('bar').style.width = r.score + '%'; }, 50);
+
+      clearInterval(scoreTimer);
+      scoreTimer = setInterval(function () {
+        shown = Math.min(r.score, shown + 3);
+        $('score').textContent = shown + '/100';
+        if (shown >= r.score) { clearInterval(scoreTimer); }
+      }, 25);
+    }
+
+    $('backTo1').addEventListener('click', function () { showStep(1); });
+
+    $('toVault').addEventListener('click', function () {
+      renderVault();
+      showStep(3);
+    });
+
+
+    /* ----- Bước 3: DealVault ----- */
+    function renderVault() {
+      var d = deal;
+      var after = new Date(d.deadline.getTime() + 86400000);
+
+      $('vaultId').textContent = d.id;
+      $('vTime').max = localInputValue(new Date());
+
+      var lines = [
+        ['Tạo hồ sơ giao dịch', fmtTime(d.createdAt)],
+        [d.chat ? 'Lưu nội dung chat (' + d.chat.length + ' ký tự)' : 'Chưa có nội dung chat', ''],
+        ['Ảnh bằng chứng: ' + (d.fileNames.length + d.extraFiles + d.sampleFiles) + ' tệp', d.fileNames.length ? d.fileNames.join(', ') : ''],
+        ['Hạn giao hàng cam kết (sau ' + d.days + ' ngày)', fmtDate(d.deadline)],
+        ['Mốc kiểm tra: nếu chưa nhận hàng, hãy xác nhận ở bước 4', fmtDate(after)]
+      ];
+
+      if (d.post) { lines.splice(2, 0, ['Link bài đăng gốc đã lưu', d.post]); }
+      if (d.paid) { lines.splice(lines.length - 2, 0, ['Chuyển khoản ' + vnd(d.paidAmount), fmtTime(d.paidAt)]); }
+
+      var html = '';
+      lines.forEach(function (l) {
+        html += '<div>' + esc(l[0]) + (l[1] ? '<small>' + esc(l[1]) + '</small>' : '') + '</div>';
+      });
+      $('vaultTimeline').innerHTML = html;
+    }
+
+    function updateDiff() {
+      var amount = parseMoney($('vAmount').value);
+      var out = $('vDiff');
+
+      if (!deal || isNaN(amount)) { out.textContent = ''; return; }
+
+      var diff = amount - deal.price;
+      out.textContent = diff === 0
+        ? 'Số tiền khớp với giá đã nhập ở bước 1 (' + vnd(deal.price) + ').'
+        : 'Chênh lệch ' + (diff > 0 ? '+' : '−') + vnd(Math.abs(diff)) + ' so với giá ở bước 1 (' + vnd(deal.price) + '). Hãy kiểm tra lại.';
+    }
+
+    document.querySelectorAll('input[name="vPaid"]').forEach(function (radio) {
+      radio.addEventListener('change', function () { $('vPayBox').hidden = radioValue('vPaid') !== 'yes'; });
+    });
+
+    $('vAmount').addEventListener('input', updateDiff);
+    $('vNow').addEventListener('click', function () { $('vTime').value = localInputValue(new Date()); });
+
+    bindForm('s3', 'vBtn', function () {
+      $('vError').hidden = true;
+
+      var paid = radioValue('vPaid');
+      var ok = setError('vPaid', paid ? '' : 'Vui lòng chọn.');
+      var amount = 0;
+      var paidAt = null;
+
+      if (paid === 'yes') {
+        amount = parseMoney($('vAmount').value);
+        paidAt = $('vTime').value ? new Date($('vTime').value) : null;
+
+        ok = setError('vAmount', amount >= 1000 ? '' : 'Số tiền chưa hợp lệ.') && ok;
+        ok = setError('vTime', !paidAt ? 'Vui lòng chọn thời điểm chuyển khoản.' : (paidAt > new Date() ? 'Thời điểm không được ở tương lai.' : '')) && ok;
+      }
+      if (!ok) { return; }
+
+      setLoading($('vBtn'), true, 'Đang lưu hồ sơ...');
+
+      setTimeout(function () {
+        setLoading($('vBtn'), false, 'Lưu hồ sơ →');
+
+        deal.post = $('vPost').value.trim();
+        deal.extraFiles = $('vFiles').files.length;
+        deal.paid = paid === 'yes';
+        deal.paidAmount = deal.paid ? amount : 0;
+        deal.paidAt = deal.paid ? paidAt : null;
+
+        /* Mã kiểm tra toàn vẹn: đổi bất kỳ thông tin nào thì mã này đổi theo */
+        deal.fingerprint = hash(JSON.stringify([deal.id, deal.seller, deal.acc, deal.holder, deal.item, deal.price, deal.days, deal.chat, deal.post, deal.paidAmount]));
+
+        renderVault();
+        renderHistory();
+        showStep(4);
+      }, 800);
+    });
+
+
+    /* ----- Bước 4: Verified Deal History ----- */
+    function statsHtml(s) {
+      var rate = rateOf(s);
+      return '<div class="card"><small>Giao dịch hoàn thành</small><div class="score">' + s.completed + '</div></div>' +
+        '<div class="card"><small>Người mua khác nhau</small><div class="score">' + s.buyers + '</div></div>' +
+        '<div class="card"><small>Chưa giải quyết</small><div class="score">' + s.unresolved + '</div></div>' +
+        '<div class="card"><small>Tỷ lệ hoàn thành</small><div class="score">' + (rate === null ? '—' : rate + '%') + '</div></div>';
+    }
+
+    function renderHistory() {
+      var d = deal;
+      var s = ensureSeller(d.sellerKey);
+      var finished = d.outcome === 'ok';
+
+      $('histSeller').textContent = 'Lịch sử của ' + d.seller + ' trên ShieldPay' + (s.completed + s.unresolved === 0 ? ' (chưa có giao dịch nào được xác nhận)' : '');
+      $('vaultNote').textContent = 'Hồ sơ ' + d.id + ' đã lưu. Mã kiểm tra: ' + d.fingerprint + '.';
+      $('histStats').innerHTML = statsHtml(s);
+
+      var daysLeft = Math.ceil((d.deadline - new Date()) / 86400000);
+      $('deadlineInfo').textContent = daysLeft >= 0
+        ? 'Hạn giao hàng ' + fmtDate(d.deadline) + ': còn ' + daysLeft + ' ngày. Hãy xác nhận khi bạn đã nhận được hàng hoặc khi quá hạn.'
+        : 'Đã quá hạn giao hàng ' + Math.abs(daysLeft) + ' ngày.';
+
+      $('outForm').hidden = finished || !d.paid;
+      $('noPayBox').hidden = d.paid;
+      $('doneBox').hidden = !finished;
+    }
+
+    $('backTo3').addEventListener('click', function () { goStep(3); });
+
+    bindForm('outForm', 'outBtn', function () {
+
+      var out = radioValue('outcome');
+      if (!setError('outcome', out ? '' : 'Vui lòng chọn kết quả giao dịch.')) { return; }
+
+      setLoading($('outBtn'), true, 'Đang xác nhận...');
+
+      setTimeout(function () {
+        setLoading($('outBtn'), false, 'Xác nhận');
+
+        var s = ensureSeller(deal.sellerKey);
+        var before = { completed: s.completed, buyers: s.buyers, unresolved: s.unresolved };
+        deal.outcome = out;
+
+        if (out === 'ok') {
+          /* Ghi nhận vào lịch sử người bán: +1 giao dịch, +1 người mua nếu là lần đầu */
+          s.completed += 1;
+          if (!buyerSeen[deal.sellerKey]) { s.buyers += 1; buyerSeen[deal.sellerKey] = true; }
+
+          var rateBefore = rateOf(before);
+          var rateAfter = rateOf(s);
+
+          $('doneText').textContent = 'Đã ghi nhận 1 giao dịch hoàn thành vào lịch sử của ' + deal.seller + '. ' +
+            'Hoàn thành ' + before.completed + ' → ' + s.completed + ', người mua khác nhau ' + before.buyers + ' → ' + s.buyers +
+            ', tỷ lệ hoàn thành ' + (rateBefore === null ? '—' : rateBefore + '%') + ' → ' + rateAfter + '%.';
+
+          renderHistory();
+        } else {
+          /* Có sự cố: tính vào số vụ chưa giải quyết và mở bước Scam SOS */
+          s.unresolved += 1;
+          renderSos();
+          showStep(5);
+        }
+      }, 800);
+    });
+
+    $('newDeal4').addEventListener('click', resetDeal);
+
+    $('tryProblem').addEventListener('click', function () {
+      renderSos();
+      showStep(5);
+    });
+
+
+    /* ----- Bước 5: Scam SOS ----- */
+    function renderSos() {
+      if (deal.sosDone) { return; }
+      $('sosForm').hidden = false;
+      $('sosResult').hidden = true;
+    }
+
+    function buildSos(type) {
+      var d = deal;
+      var now = new Date();
+
+      var hours = Math.max(0, Math.floor((now - d.paidAt) / 3600000));
+      var days = Math.floor(hours / 24);
+      var overdue = now > d.deadline ? Math.ceil((now - d.deadline) / 86400000) : 0;
+
+      /* Mức khẩn cấp tính từ số giờ kể từ lúc chuyển khoản */
+      if (hours <= 24) {
+        $('sosUrgency').textContent = 'Khẩn cấp: bạn mới chuyển khoản cách đây ' + hours + ' giờ. Hãy liên hệ ngân hàng ngay.';
+        $('sosFirst').textContent = 'Liên hệ ngân hàng ngay (còn trong 24 giờ đầu) để báo giao dịch nghi ngờ lừa đảo';
+      } else if (hours <= 72) {
+        $('sosUrgency').textContent = 'Nên liên hệ ngân hàng trong hôm nay (đã qua ' + hours + ' giờ kể từ khi chuyển khoản).';
+        $('sosFirst').textContent = 'Liên hệ ngân hàng trong hôm nay để báo giao dịch nghi ngờ lừa đảo';
+      } else {
+        $('sosUrgency').textContent = 'Đã qua ' + days + ' ngày kể từ khi chuyển khoản. Vẫn nên liên hệ ngân hàng và chuẩn bị hồ sơ trình báo.';
+        $('sosFirst').textContent = 'Liên hệ ngân hàng để báo giao dịch nghi ngờ lừa đảo';
+      }
+
+      var timeline = [
+        ['Chuyển khoản ' + vnd(d.paidAmount), fmtTime(d.paidAt)],
+        ['Hạn giao hàng cam kết', fmtDate(d.deadline) + (overdue ? ' (quá hạn ' + overdue + ' ngày)' : '')],
+        ['Phát hiện sự cố: ' + type, fmtTime(now) + ' · cách lúc chuyển tiền ' + hours + ' giờ']
+      ];
+      var html = '';
+      timeline.forEach(function (l) { html += '<div>' + esc(l[0]) + '<small>' + esc(l[1]) + '</small></div>'; });
+      $('sosTimeline').innerHTML = html;
+
+      $('sosSummary').value = [
+        'HỒ SƠ SỰ VIỆC SHIELDPAY ' + d.id,
+        'Thời điểm lập: ' + fmtTime(now),
+        'Sự việc: ' + type,
+        '',
+        'Người bán: ' + d.seller + ' (' + d.platform + ')',
+        'Tài khoản nhận tiền: ' + d.acc + ' - ' + d.holder,
+        'Số điện thoại người bán: ' + (d.phone || 'không có'),
+        'Sản phẩm: ' + d.item + ', giá ' + vnd(d.price),
+        '',
+        'Đã chuyển: ' + vnd(d.paidAmount) + ' lúc ' + fmtTime(d.paidAt),
+        'Cam kết giao hàng: trong ' + d.days + ' ngày, hạn ' + fmtDate(d.deadline) + (overdue ? ', quá hạn ' + overdue + ' ngày' : ''),
+        'Bằng chứng đã lưu: ' + (d.fileNames.length + d.extraFiles + d.sampleFiles) + ' ảnh' + (d.post ? ', link bài đăng ' + d.post : ''),
+        'Điểm rủi ro khi kiểm tra: ' + d.risk.score + '/100',
+        'Mã kiểm tra hồ sơ: ' + d.fingerprint
+      ].join('\n');
+
+      document.querySelectorAll('#sosChecklist input').forEach(function (box) { box.checked = false; });
+      updateSosProgress();
+
+      d.sosDone = true;
+      d.sosType = type;
+      $('sosForm').hidden = true;
+      $('sosResult').hidden = false;
+    }
+
+    function updateSosProgress() {
+      var done = document.querySelectorAll('#sosChecklist input:checked').length;
+      $('sosCount').textContent = done + '/5 (' + (done * 20) + '%)';
+      $('sosBar').style.width = (done * 20) + '%';
+    }
+
+    $('sosChecklist').addEventListener('change', updateSosProgress);
+
+    bindForm('sosForm', 'sosBtn', function () {
+
+      var type = $('sosType').value;
+      if (!setError('sosType', type ? '' : 'Vui lòng chọn sự việc bạn gặp phải.')) { return; }
+
+      setLoading($('sosBtn'), true, 'Đang tạo hồ sơ...');
+
+      setTimeout(function () {
+        setLoading($('sosBtn'), false, 'Tạo hồ sơ sự việc');
+        buildSos(type);
+      }, 800);
+    });
+
+    $('sosCopy').addEventListener('click', function () {
+      var box = $('sosSummary');
+      var copied = false;
+
+      box.select();
+      try { copied = document.execCommand('copy'); } catch (err) { copied = false; }
+
+      showStatus('sosCopyStatus', copied ? 'Đã sao chép.' : 'Hãy bấm Ctrl+C để sao chép.', !copied);
+    });
+
+    $('sosSend').addEventListener('click', function () {
+      /* Thêm vụ việc của bạn vào dữ liệu mô phỏng để cảnh báo người mua sau */
+      if (!deal.reported) {
+        var existed = REPORTS.some(function (r) { return r.id === deal.id; });
+
+        if (!existed) {
+          REPORTS.push({ id: deal.id, account: deal.acc, phone: deal.phone, seller: deal.sellerKey, victims: 1, loss: deal.paidAmount });
+        }
+        deal.reported = true;
+      }
+
+      renderRelated();
+      showStep(6);
+    });
+
+
+    /* ----- Bước 6: Related Incidents ----- */
+    function renderRelated() {
+      var d = deal;
+      var matches = matchReports(d);
+
+      $('relIntro').textContent = 'Hai vụ việc được coi là liên quan khi trùng ít nhất một trong ba thông tin: số tài khoản, số điện thoại hoặc tài khoản mạng xã hội của người bán.';
+
+      var victims = 1;           /* tính cả bạn */
+      var loss = d.paidAmount;
+
+      if (matches.length) {
+        var rows = '<table><tr><th>Vụ việc</th><th>Điểm trùng</th><th>Số nạn nhân</th><th>Thiệt hại</th></tr>';
+
+        matches.forEach(function (m) {
+          victims += m.report.victims;
+          loss += m.report.loss;
+          rows += '<tr><td>' + esc(m.report.id) + '</td><td>' + esc(m.keys.join(', ')) + '</td><td>' + m.report.victims + '</td><td>' + vnd(m.report.loss) + '</td></tr>';
+        });
+
+        $('relTable').innerHTML = rows + '</table>';
+        $('relNote').textContent = 'Các nạn nhân này có thể đang gặp cùng một đối tượng hoặc nhóm lừa đảo. Tổng nạn nhân = số nạn nhân các vụ trùng + 1 (bạn).';
+      } else {
+        $('relTable').innerHTML = '<p class="muted" style="font-size: 14px;">Chưa có vụ việc nào trùng trong dữ liệu mô phỏng.</p>';
+        $('relNote').textContent = 'Vụ việc của bạn đã được ghi nhận trong bản demo này, nên lần kiểm tra sau với cùng số tài khoản sẽ có cảnh báo.';
+      }
+
+      $('relStats').innerHTML =
+        '<div class="card"><small>Vụ việc liên quan</small><div class="score">' + matches.length + '</div></div>' +
+        '<div class="card"><small>Tổng nạn nhân (gồm bạn)</small><div class="score">' + victims + '</div></div>' +
+        '<div class="card"><small>Tổng thiệt hại ước tính</small><div class="score" style="font-size: 20px;">' + vnd(loss) + '</div></div>';
+    }
+
+    $('newDeal6').addEventListener('click', resetDeal);
+
+
+    /* ----- Dữ liệu mẫu: chọn khách và điền sẵn các bước ----- */
+    var smPage = 0;
+    var SM_SIZE = 8;
+
+    /* Điền lại hạn giao hàng theo thời điểm chuyển khoản của khách mẫu */
+    function applySampleToDeal(d, s) {
+      d.id = 'SP-' + s.code;
+      d.sampleFiles = s.imgs;
+
+      if (s.paid) {
+        var paidAt = new Date(Date.now() - s.hours * 3600000);
+        d.createdAt = new Date(paidAt.getTime() - 3600000);
+        d.deadline = new Date(d.createdAt.getTime() + d.days * 86400000);
+      }
+    }
+
+    /* Điền sẵn bước 3, 4, 5 theo khách mẫu */
+    function prefillFromSample(s) {
+      document.querySelector('input[name="vPaid"][value="' + (s.paid ? 'yes' : 'no') + '"]').checked = true;
+      $('vPayBox').hidden = !s.paid;
+
+      if (s.paid) {
+        $('vAmount').value = s.price.toLocaleString('vi-VN');
+        $('vTime').value = localInputValue(new Date(Date.now() - s.hours * 3600000));
+      }
+
+      document.querySelectorAll('input[name="outcome"]').forEach(function (r) { r.checked = (r.value === s.outcome); });
+      $('sosType').value = s.incident || '';
+    }
+
+    function resetLaterForms() {
+      ['s3', 'outForm', 'sosForm'].forEach(function (id) { $(id).reset(); });
+      document.querySelectorAll('#s3 .err, #s4 .err, #s5 .err').forEach(function (el) { el.textContent = ''; });
+      $('vPayBox').hidden = true;
+      $('vError').hidden = true;
+      $('sosForm').hidden = false;
+      $('sosResult').hidden = true;
+      $('doneBox').hidden = true;
+    }
+
+    function useSample(rec) {
+      var set = function (id, value) { $(id).value = value; };
+
+      set('dSeller', '@' + rec.handle);
+      set('dPlatform', rec.platform);
+      set('dHolder', rec.holder);
+      set('dAcc', rec.acc);
+      set('dPhone', rec.phone);
+      set('dAge', rec.age);
+      set('dItem', rec.item);
+      set('dPrice', rec.price.toLocaleString('vi-VN'));
+      set('dRef', rec.ref ? rec.ref.toLocaleString('vi-VN') : '');
+      set('dPay', rec.pay);
+      set('dDays', String(rec.days));
+      set('dChat', rec.chat);
+
+      document.querySelectorAll('#s1 .err').forEach(function (el) { el.textContent = ''; });
+      document.querySelectorAll('#s1 .invalid').forEach(function (el) { el.classList.remove('invalid'); });
+      $('dError').hidden = true;
+
+      resetLaterForms();
+      currentSample = rec;
+
+      $('smStatus').textContent = 'Đã điền dữ liệu của ' + rec.code + ' (' + rec.name + ', ' + SCENARIOS[rec.scen] +
+        '). Bấm "Kiểm tra rủi ro" ở cuối form để đi tiếp.';
+      $('smStatus').hidden = false;
+      $('s1').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function smFiltered() {
+      var f = $('smFilter').value;
+      var q = plain($('smSearch').value.trim());
+
+      return CUSTOMERS.filter(function (c) {
+        if (f === 'sos' && c.outcome !== 'late' && c.outcome !== 'issue') { return false; }
+        if (f && f !== 'sos' && c.scen !== f) { return false; }
+        return !q || plain(c.code + ' ' + c.name).indexOf(q) > -1;
+      });
+    }
+
+    function renderSample() {
+      var list = smFiltered();
+      var pages = Math.max(1, Math.ceil(list.length / SM_SIZE));
+      smPage = Math.min(smPage, pages - 1);
+
+      var rows = '<table><tr><th>Mã</th><th>Người mua</th><th>Người bán</th><th>Giá</th><th>Kịch bản</th><th></th></tr>';
+
+      list.slice(smPage * SM_SIZE, smPage * SM_SIZE + SM_SIZE).forEach(function (c) {
+        rows += '<tr><td>' + c.code + '</td><td>' + esc(c.name) + '</td><td>@' + esc(c.handle) + '</td><td>' + vnd(c.price) +
+          '</td><td>' + esc(SCENARIOS[c.scen]) + '</td><td><button class="btn small" type="button" data-use="' + c.code +
+          '" style="margin: 0;">Dùng</button></td></tr>';
+      });
+
+      $('smList').innerHTML = '<div style="overflow-x: auto;">' + rows + '</table></div>' +
+        (list.length ? '' : '<p class="muted" style="font-size: 14px;">Không có khách phù hợp.</p>');
+      $('smPageInfo').textContent = 'Trang ' + (smPage + 1) + '/' + pages + ' · ' + list.length + ' khách';
+    }
+
+    function randomSample(filter) {
+      var old = $('smFilter').value;
+      if (filter !== undefined) { $('smFilter').value = filter; }
+
+      var list = smFiltered();
+      if (filter !== undefined) { $('smFilter').value = old; }
+
+      return list.length ? list[Math.floor(Math.random() * list.length)] : null;
+    }
+
+    function initSample() {
+      var counts = {};
+      var sos = 0;
+
+      CUSTOMERS.forEach(function (c) {
+        counts[c.scen] = (counts[c.scen] || 0) + 1;
+        if (c.outcome === 'late' || c.outcome === 'issue') { sos++; }
+      });
+
+      var options = '<option value="">Tất cả kịch bản (' + CUSTOMERS.length + ')</option>' +
+        '<option value="sos">Có sự cố, mở được Scam SOS và Related (' + sos + ')</option>';
+
+      Object.keys(SCENARIOS).forEach(function (key) {
+        options += '<option value="' + key + '">' + esc(SCENARIOS[key]) + ' (' + counts[key] + ')</option>';
+      });
+      $('smFilter').innerHTML = options;
+
+      $('smFilter').addEventListener('change', function () { smPage = 0; renderSample(); });
+      $('smSearch').addEventListener('input', function () { smPage = 0; renderSample(); });
+      $('smPrev').addEventListener('click', function () { smPage = Math.max(0, smPage - 1); renderSample(); });
+      $('smNext').addEventListener('click', function () { smPage += 1; renderSample(); });
+
+      $('smRandom').addEventListener('click', function () {
+        var rec = randomSample();
+        if (rec) { useSample(rec); }
+      });
+
+      $('smClear').addEventListener('click', function () {
+        currentSample = null;
+        resetLaterForms();
+        $('smStatus').hidden = true;
+      });
+
+      $('smList').addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-use]');
+        if (btn) { useSample(CUSTOMERS[Number(btn.dataset.use.slice(2)) - 1]); }
+      });
+
+      /* Sửa tay thông tin người bán thì thôi dùng khách mẫu */
+      ['dSeller', 'dAcc', 'dPhone'].forEach(function (id) {
+        $(id).addEventListener('input', function () { currentSample = null; });
+      });
+
+      renderSample();
+    }
+
+
+    /* ----- Khởi tạo trang Giao dịch ----- */
+    function initDeal() {
+      $('steps').addEventListener('click', function (e) {
+        var btn = e.target.closest('button');
+        if (btn && !btn.disabled) { goStep(Number(btn.dataset.s)); }
+      });
+
+      /* Tự định dạng số tiền khi rời ô nhập: 3500000 → 3.500.000 */
+      ['dPrice', 'dRef', 'vAmount'].forEach(function (id) {
+        $(id).addEventListener('blur', function () {
+          var n = parseMoney(this.value);
+          if (!isNaN(n)) { this.value = n.toLocaleString('vi-VN'); }
+        });
+      });
+
+      initSample();
+      resetDeal();
+    }
+
+
+    /* ---------------------------------------------------------
+       TRỢ LÝ SHIELDY: hỏi đáp bằng chữ và quét ảnh
+       Trợ lý trả lời theo luật có sẵn và tra cứu trong dữ liệu mô phỏng,
+       chưa phải mô hình AI thật (cần máy chủ mới có).
+       --------------------------------------------------------- */
+    var seenImages = [];     /* dấu vân tay các ảnh đã gửi trong phiên */
+    var botOpened = false;
+
+    /* Ảnh nhân vật + hiệu ứng: chớp mắt, tim trên anten đập, tim nhỏ bay lên */
+    function mascotHtml() {
+      var heart = '<svg viewBox="0 0 24 22"><path fill="#F7A8B9" d="M12 21C5 15 1 11.5 1 7.2 1 3.9 3.600 1.500 6.600 1.500 8.900 1.500 10.900 2.800 12 4.800 13.100 2.800 15.100 1.500 17.400 1.500 20.400 1.500 23 3.900 23 7.200 23 11.500 19 15 12 21Z"/></svg>';
+      var html = '<span class="mascot-wrap"><img class="mascot-img" src="' + MASCOT.src + '" alt="Shieldy">';
+
+      MASCOT.eyes.forEach(function (eye) {
+        html += '<i class="lid" style="left:' + eye.x + '%; top:' + eye.y + '%; width:' + eye.w + '%; height:' + eye.h +
+          '%; background:' + MASCOT.visor + ';"></i>';
+      });
+
+      html += '<span class="m-heart" style="left:' + (MASCOT.antenna[0] + 1) + '%; top:5.500%;">' + heart + '</span>';
+      html += '<span class="fl">' + heart + '</span><span class="fl f2">' + heart + '</span><span class="fl f3">' + heart + '</span>';
+
+      return html + '</span>';
+    }
+
+    function botAdd(kind, html) {
+      var box = $('botMsgs');
+      var el = document.createElement('div');
+
+      el.className = 'msg is-' + kind;
+      el.innerHTML = html;
+      box.appendChild(el);
+      box.scrollTop = box.scrollHeight;
+      return el;
+    }
+
+    function botTyping(on) {
+      $('bot').classList.toggle('busy', on);
+
+      var old = $('botTyping');
+      if (old) { old.remove(); }
+
+      if (on) {
+        var el = botAdd('bot', '<span class="dots"><span></span><span></span><span></span></span>');
+        el.id = 'botTyping';
+      }
+    }
+
+    /* Nút gợi ý: mỗi nút hoặc gửi một câu hỏi, hoặc chạy một hành động */
+    function botChips(list) {
+      var box = $('botChips');
+      box.innerHTML = '';
+
+      (list || DEFAULT_CHIPS).forEach(function (chip) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = chip.label;
+
+        btn.addEventListener('click', function () {
+          if (chip.run) { chip.run(); } else { botAsk(chip.say); }
+        });
+
+        box.appendChild(btn);
+      });
+    }
+
+    var DEFAULT_CHIPS = [
+      { label: 'Hướng dẫn 6 bước', say: 'Hướng dẫn 6 bước' },
+      { label: 'Thử khách có sự cố', run: function () { tryScenario('sos'); } },
+      { label: 'Tôi nghi bị lừa', say: 'Tôi nghi bị lừa tiền' },
+      { label: 'Cách tính điểm', say: 'Điểm rủi ro tính thế nào' }
+    ];
+
+    function tryScenario(filter) {
+      var rec = randomSample(filter);
+      if (!rec) { return; }
+
+      go('deal');
+      showStep(1);
+      useSample(rec);
+
+      botReply('Mình đã điền sẵn khách <b>' + rec.code + '</b> (' + esc(SCENARIOS[rec.scen]) + ') vào Bước 1. ' +
+        'Bạn kéo xuống bấm <b>Kiểm tra rủi ro</b>, rồi cứ bấm tiếp ở mỗi bước. Cần giải thích bước nào cứ hỏi mình nhé.', null, 500);
+    }
+
+    function botReply(html, chips, delay) {
+      botTyping(true);
+
+      setTimeout(function () {
+        botTyping(false);
+        botAdd('bot', html);
+        botChips(chips);
+      }, delay || 650);
+    }
+
+    function botAsk(text) {
+      botAdd('me', esc(text));
+      botReply.apply(null, (function () {
+        var r = answer(text);
+        return [r.html, r.chips, 700];
+      })());
+    }
+
+    function has(p, words) {
+      return words.some(function (w) { return p.indexOf(w) > -1; });
+    }
+
+    function listHtml(items) {
+      return '<ul><li>' + items.join('</li><li>') + '</li></ul>';
+    }
+
+    /* ----- Tra cứu số tài khoản, số điện thoại, tài khoản người bán ----- */
+    function lookupNumber(num) {
+      var rs = REPORTS.filter(function (r) { return r.account === num || r.phone === num; });
+
+      if (!rs.length) {
+        return 'Số <b>' + esc(num) + '</b>: chưa thấy trong dữ liệu mô phỏng. Điều này không có nghĩa là an toàn.';
+      }
+
+      var loss = rs.reduce(function (sum, r) { return sum + r.loss; }, 0);
+      return 'Số <b>' + esc(num) + '</b> xuất hiện trong <b>' + rs.length + ' vụ việc</b> (' +
+        rs.slice(0, 3).map(function (r) { return r.id; }).join(', ') + (rs.length > 3 ? '...' : '') +
+        '), thiệt hại ước tính ' + vnd(loss) + '. Bạn nên tránh chuyển tiền cho số này.';
+    }
+
+    function lookupSeller(handle) {
+      var key = sellerKey(handle);
+      var s = SELLERS[key];
+      var rs = REPORTS.filter(function (r) { return r.seller === key; });
+
+      if (!s && !rs.length) {
+        return '<b>@' + esc(key) + '</b>: chưa có dữ liệu trên ShieldPay. Người bán mới nên được kiểm tra kỹ hơn.';
+      }
+
+      s = s || { completed: 0, buyers: 0, unresolved: 0 };
+      var rate = rateOf(s);
+      return '<b>@' + esc(key) + '</b>: ' + s.completed + ' giao dịch hoàn thành, ' + s.buyers + ' người mua khác nhau, ' +
+        s.unresolved + ' vụ chưa giải quyết' + (rate === null ? '' : ', tỷ lệ hoàn thành ' + rate + '%') +
+        (rs.length ? '. Có ' + rs.length + ' vụ bị báo cáo liên quan.' : '.');
+    }
+
+    /* ----- Bộ trả lời theo luật ----- */
+    function stepHelp(step) {
+      var text = {
+        1: 'Bước 1 là nhập thông tin người bán và sản phẩm. Các ô có dấu * là bắt buộc. Muốn nhanh, dùng khung <b>Dữ liệu mẫu</b> ở đầu trang.',
+        2: 'Bước 2 chấm điểm rủi ro. Mỗi dòng là một phép tính cộng hoặc trừ điểm, tổng điểm càng cao càng đáng ngại. Bấm <b>Tạo hồ sơ DealVault</b> để đi tiếp.',
+        3: 'Bước 3 lưu hồ sơ. Nếu bạn đã chuyển khoản, hãy nhập số tiền và thời điểm chuyển để các bước sau tính đúng hạn giao hàng.',
+        4: 'Bước 4 là xác nhận kết quả: nhận đúng hàng thì ghi vào lịch sử người bán, có sự cố thì chuyển sang Scam SOS.',
+        5: 'Bước 5 tạo hồ sơ sự việc, tính độ khẩn cấp theo số giờ từ lúc chuyển tiền và cho bạn bản tóm tắt để gửi ngân hàng hoặc cơ quan chức năng.',
+        6: 'Bước 6 tìm các vụ việc trùng số tài khoản, số điện thoại hoặc tài khoản người bán để xem có nhiều nạn nhân cùng gặp một đối tượng không.'
+      };
+      return text[step];
+    }
+
+    function answer(raw) {
+      var p = plain(raw);
+      var page = document.querySelector('.page.on').id;
+      var out = [];
+
+      /* 1. Tra cứu số hoặc tên người bán */
+      var wantsLookup = has(p, ['so tk', 'stk', 'tai khoan', 'sdt', 'dien thoai', 'kiem tra', 'tra cuu', 'check']) || /^[\d\s.\-]{8,}$/.test(raw.trim());
+      var nums = (raw.match(/\d[\d\s.\-]{6,20}\d/g) || []).map(function (n) { return n.replace(/\D/g, ''); }).filter(function (n) { return n.length >= 8 && n.length <= 19; });
+      var handles = raw.match(/@[\w.]+/g) || [];
+
+      if (wantsLookup || handles.length) {
+        nums.slice(0, 2).forEach(function (n) { out.push(lookupNumber(n)); });
+        handles.slice(0, 2).forEach(function (h) { out.push(lookupSeller(h)); });
+      }
+      if (out.length) {
+        return { html: out.join('<br><br>') + '<br><br>Dữ liệu này là mô phỏng. Muốn kiểm tra đầy đủ, hãy tạo giao dịch ở bước 1.', chips: null };
+      }
+
+      /* 2. Nghi bị lừa */
+      if (has(p, ['bi lua', 'lua dao', 'mat tien', 'sos', 'bien mat', 'chan lien', 'khong nhan duoc', 'bi quit', 'lua minh'])) {
+        var urgent = deal && deal.paid ? '<br><br>Giao dịch của bạn đã chuyển <b>' + vnd(deal.paidAmount) + '</b>. Hãy mở Scam SOS để mình tính độ khẩn cấp.' : '';
+        return {
+          html: 'Bình tĩnh nhé, bạn làm lần lượt như sau:' + listHtml([
+            '<b>Liên hệ ngân hàng ngay</b> để báo giao dịch nghi ngờ lừa đảo. Càng sớm càng tốt.',
+            'Lưu biên lai, ảnh chat, bài đăng và số tài khoản người bán.',
+            'Không chuyển thêm tiền và không đưa mã OTP cho bất kỳ ai nói giúp lấy lại tiền.',
+            'Trình báo với công an nơi bạn cư trú khi cần.',
+            'Gửi báo cáo ở bước 5 để cảnh báo người mua khác.'
+          ]) + 'Mình không thể bảo đảm lấy lại được tiền, nhưng hồ sơ rõ ràng sẽ giúp việc xử lý nhanh hơn.' + urgent,
+          chips: [
+            { label: 'Thử kịch bản có sự cố', run: function () { tryScenario('sos'); } },
+            { label: 'Tra cứu số tài khoản', say: 'Kiểm tra số tài khoản 0123456789' }
+          ]
+        };
+      }
+
+      /* 3. Điểm rủi ro */
+      if (has(p, ['diem', 'rui ro', 'risk', 'cong thuc', 'tinh toan'])) {
+        if (deal && deal.risk) {
+          var top = deal.risk.items.filter(function (it) { return it.pts > 0; }).sort(function (a, b) { return b.pts - a.pts; }).slice(0, 3);
+          return {
+            html: 'Giao dịch của bạn đang có <b>' + deal.risk.score + '/100</b>' +
+              (top.length ? '. Ba yếu tố cộng nhiều điểm nhất:' + listHtml(top.map(function (it) { return esc(it.label) + ' (+' + it.pts + '): ' + esc(it.calc); })) : '. Chưa có yếu tố nào cộng điểm.') +
+              'Điểm chỉ để tham khảo, không khẳng định ai đó là lừa đảo.',
+            chips: null
+          };
+        }
+        return {
+          html: 'Điểm rủi ro là tổng của 9 yếu tố:' + listHtml([
+            'Độ mới của tài khoản người bán (0 đến 20 điểm)',
+            'Hình thức thanh toán: chuyển khoản trước +15, cọc +7, COD 0',
+            'Mức giá thấp hơn thị trường: từ 15% bắt đầu cộng, từ 50% cộng 25',
+            'Giá trị giao dịch lớn (+4 đến +8)',
+            'Tên chủ tài khoản khác tên người bán (+10)',
+            'Cụm từ thúc ép trong chat (+5 mỗi cụm, tối đa 15)',
+            'Số lần bị báo cáo trong dữ liệu (+12 mỗi vụ, tối đa 36)',
+            'Lịch sử hoàn thành (có thể trừ tới 15 điểm) và vụ chưa giải quyết'
+          ]) + 'Từ 60 điểm là mức cao, từ 30 là trung bình.',
+          chips: null
+        };
+      }
+
+      /* 4. Dữ liệu mẫu, cách thử */
+      if (has(p, ['du lieu mau', 'khach mau', 'kich ban', 'test', 'thu nhanh', 'dung thu', 'khong chuyen duoc', 'khong qua duoc', 'bi ket', 'khong sang'])) {
+        return {
+          html: 'Muốn đi hết các bước mà không phải gõ tay: ở <b>Bước 1</b> mở khung <b>Dữ liệu mẫu</b>, chọn một khách rồi bấm <b>Dùng</b>.' + listHtml([
+            'Kịch bản <b>Có sự cố</b> sẽ mở được cả bước 5 và 6.',
+            'Kịch bản <b>Uy tín</b> đi trọn bước 1 đến 4.',
+            'Kịch bản <b>Đáng ngờ, chưa chuyển tiền</b> dừng ở bước 3 vì chưa có khoản chuyển.'
+          ]) + 'Các bước sau được điền sẵn theo khách đó, bạn chỉ cần bấm tiếp.',
+          chips: [
+            { label: 'Thử khách có sự cố', run: function () { tryScenario('sos'); } },
+            { label: 'Thử khách uy tín', run: function () { tryScenario('ok_trust'); } }
+          ]
+        };
+      }
+
+      /* 5. Hướng dẫn các bước, bước hiện tại */
+      if (has(p, ['buoc nay', 'dang o buoc', 'buoc hien tai', 'o buoc nao'])) {
+        return { html: page === 'deal' ? stepHelp(curStep) : 'Bạn đang không ở trang Giao dịch. Bấm <b>Giao dịch</b> trên menu để bắt đầu.', chips: null };
+      }
+      if (has(p, ['buoc', 'bat dau', 'cach dung', 'huong dan', 'lam sao', 'lam the nao', 'create deal'])) {
+        return {
+          html: 'ShieldPay có 6 bước:' + listHtml([
+            '<b>1 Create Deal</b>: nhập thông tin người bán và sản phẩm',
+            '<b>2 Risk Check</b>: chấm điểm rủi ro, giải thích từng phép tính',
+            '<b>3 DealVault</b>: lưu hồ sơ, bằng chứng, biên lai',
+            '<b>4 Verified History</b>: xác nhận bạn đã nhận hàng chưa',
+            '<b>5 Scam SOS</b> và <b>6 Related Incidents</b>: chỉ mở khi có sự cố'
+          ]) + (deal ? '' : 'Bạn bắt đầu từ Bước 1 nhé.'),
+          chips: null
+        };
+      }
+
+      if (has(p, ['dealvault', 'ho so', 'bang chung', 'bien lai'])) {
+        return { html: 'DealVault lưu hồ sơ giao dịch: nội dung chat, ảnh, link bài đăng, biên lai và hạn giao hàng. Nếu người bán xóa bài hoặc tài khoản, bạn vẫn còn bằng chứng. Mã kiểm tra hồ sơ đổi khi thông tin bị sửa.', chips: null };
+      }
+      if (has(p, ['lich su', 'verified', 'uy tin'])) {
+        return { html: 'Verified Deal History ghi lại các giao dịch đã được người mua xác nhận nhận đúng hàng. Bạn xem được số giao dịch hoàn thành, số người mua khác nhau và số vụ chưa giải quyết. Lịch sử tốt không bảo đảm người bán luôn an toàn.', chips: null };
+      }
+      if (has(p, ['lien quan', 'related', 'nhom lua', 'nan nhan'])) {
+        return { html: 'Related Incidents tìm các vụ việc trùng số tài khoản, số điện thoại hoặc tài khoản người bán, rồi cộng dồn số nạn nhân và thiệt hại. Bước này mở sau khi bạn gửi báo cáo ở Scam SOS.', chips: null };
+      }
+      if (has(p, ['bang gia', 'goi plus', 'goi business', 'goi free', 'tra phi', 'mien phi'])) {
+        return { html: 'Có 3 gói: Free (0đ), Plus (49.000đ/tháng) và Business (199.000đ/tháng). Mức giá chỉ là gợi ý cho bản thử.', chips: [{ label: 'Xem trang Price', run: function () { go('price'); } }] };
+      }
+      if (has(p, ['dang nhap', 'dang ky', 'profile', 'ho so ca nhan'])) {
+        return { html: 'Đăng nhập và đăng ký chỉ là bản thử: dữ liệu nằm trong bộ nhớ của trang và mất khi tải lại. Sau khi đăng ký, bạn vào được trang hồ sơ để chỉnh sửa thông tin.', chips: [{ label: 'Mở trang Đăng ký', run: function () { go('signup'); } }] };
+      }
+      if (has(p, ['anh', 'hinh', 'quet', 'chup man hinh', 'screenshot'])) {
+        return { html: 'Bạn bấm nút <b>Ảnh</b> cạnh ô chat để gửi ảnh chụp cuộc trò chuyện hoặc bài đăng. Mình sẽ cố đọc số tài khoản, số điện thoại, số tiền và các cụm từ thúc ép, rồi đối chiếu với dữ liệu. Cần có internet để đọc chữ trong ảnh.', chips: null };
+      }
+      if (has(p, ['cam on', 'thanks', 'thank'])) {
+        return { html: 'Không có gì! Cần gì cứ gọi mình nhé.', chips: null };
+      }
+      if (/^(hi|hello|alo|chao|xin chao|hey)/.test(p)) {
+        return { html: 'Chào bạn! Mình là Shieldy. Bạn muốn xem cách dùng, thử nhanh bằng dữ liệu mẫu hay nhờ mình kiểm tra một số tài khoản?', chips: null };
+      }
+
+      return {
+        html: 'Mình chưa hiểu rõ ý bạn. Bạn thử hỏi về các bước, cách tính điểm rủi ro, dữ liệu mẫu, hoặc gõ <b>kiểm tra số tài khoản ...</b>. Bạn cũng có thể gửi ảnh chụp cuộc trò chuyện để mình quét.',
+        chips: null
+      };
+    }
+
+    /* ----- Quét ảnh ----- */
+    function loadImage(url) {
+      return new Promise(function (resolve, reject) {
+        var img = new Image();
+        img.onload = function () { resolve(img); };
+        img.onerror = reject;
+        img.src = url;
+      });
+    }
+
+    /* Dấu vân tay ảnh (dHash 64 bit): hai ảnh giống nhau cho dãy bit gần giống nhau */
+    function imageHash(img) {
+      var canvas = document.createElement('canvas');
+      canvas.width = 9;
+      canvas.height = 8;
+
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, 9, 8);
+      var d = ctx.getImageData(0, 0, 9, 8).data;
+      var bits = '';
+
+      for (var y = 0; y < 8; y++) {
+        for (var x = 0; x < 8; x++) {
+          var i = (y * 9 + x) * 4;
+          var j = i + 4;
+          var g1 = d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114;
+          var g2 = d[j] * 0.299 + d[j + 1] * 0.587 + d[j + 2] * 0.114;
+          bits += g1 > g2 ? '1' : '0';
+        }
+      }
+      return bits;
+    }
+
+    function bitsToHex(bits) {
+      var hex = '';
+      for (var i = 0; i < 64; i += 4) { hex += parseInt(bits.substr(i, 4), 2).toString(16); }
+      return hex.toUpperCase();
+    }
+
+    function hamming(a, b) {
+      var n = 0;
+      for (var i = 0; i < a.length; i++) { if (a[i] !== b[i]) { n++; } }
+      return n;
+    }
+
+    /* Đọc chữ trong ảnh bằng Tesseract.js (tải từ cdnjs, cần internet) */
+    function runOcr(file) {
+      return new Promise(function (resolve, reject) {
+        var timer = setTimeout(function () { reject(new Error('timeout')); }, 60000);
+
+        function recognize() {
+          window.Tesseract.recognize(file, 'eng').then(function (res) {
+            clearTimeout(timer);
+            resolve(res.data.text || '');
+          }, function (err) {
+            clearTimeout(timer);
+            reject(err);
+          });
+        }
+
+        if (window.Tesseract) { recognize(); return; }
+
+        var s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js';
+        s.onload = recognize;
+        s.onerror = function () { clearTimeout(timer); reject(new Error('load')); };
+        document.head.appendChild(s);
+      });
+    }
+
+    function analyzeText(text) {
+      var found = { accounts: [], phones: [], amounts: [], words: [] };
+      var seen = {};
+
+      (text.match(/\d(?: ?\d){7,18}/g) || []).forEach(function (m) {
+        var n = m.replace(/\s/g, '');
+        if (seen[n]) { return; }
+        seen[n] = true;
+        (/^(0|84)\d{9,10}$/.test(n) ? found.phones : found.accounts).push(n);
+      });
+
+      (text.match(/\d{1,3}(?:[.,]\d{3})+/g) || []).forEach(function (m) {
+        var v = Number(m.replace(/[.,]/g, ''));
+        if (v >= 10000) { found.amounts.push(v); }
+      });
+
+      var pt = plain(text);
+      KEYWORDS.forEach(function (k) { if (pt.indexOf(k[0]) > -1) { found.words.push(k[1]); } });
+      return found;
+    }
+
+    function describeScan(info, text) {
+      var parts = ['Mình đã nhận ảnh (' + info.w + '×' + info.h + ', dấu vân tay <b>' + bitsToHex(info.bits) + '</b>).'];
+      var chips = [];
+
+      var dup = seenImages.filter(function (s) { return hamming(s, info.bits) <= 6; }).length;
+      if (dup) { parts.push('Ảnh này <b>rất giống ảnh bạn đã gửi trước đó</b>. Nếu một người bán dùng cùng một ảnh cho nhiều người, đây là dấu hiệu cần lưu ý.'); }
+      seenImages.push(info.bits);
+
+      if (!text.trim()) {
+        parts.push('Mình chưa đọc được chữ trong ảnh (cần kết nối internet để tải bộ đọc chữ, hoặc ảnh chưa đủ rõ). ' +
+          'Bạn gõ lại số tài khoản, số điện thoại hoặc nội dung chat, mình sẽ kiểm tra giúp.');
+        botAdd('bot', parts.join('<br><br>'));
+        botChips(null);
+        return;
+      }
+
+      var f = analyzeText(text);
+      var lines = [];
+
+      f.accounts.slice(0, 3).forEach(function (n) { lines.push(lookupNumber(n)); });
+      f.phones.slice(0, 2).forEach(function (n) { lines.push(lookupNumber(n.replace(/^84/, '0'))); });
+      if (f.amounts.length) { lines.push('Số tiền thấy trong ảnh: ' + vnd(f.amounts[0]) + '.'); }
+      if (f.words.length) { lines.push('Cụm từ đáng chú ý trong chat: <b>' + esc(f.words.join(', ')) + '</b>. Đây thường là dấu hiệu thúc ép hoặc chuyển kênh trò chuyện.'); }
+
+      if (!lines.length) {
+        lines.push('Mình đọc được chữ nhưng chưa thấy số tài khoản, số điện thoại hay cụm từ đáng chú ý nào.');
+      } else {
+        parts.push('Mình đọc được:' + listHtml(lines));
+      }
+      if (lines.length === 1 && !f.accounts.length && !f.phones.length && !f.words.length && !f.amounts.length) { parts.push(lines[0]); }
+
+      if (f.accounts.length || f.phones.length) {
+        chips.push({
+          label: 'Điền vào Bước 1',
+          run: function () {
+            if (f.accounts[0]) { $('dAcc').value = f.accounts[0]; }
+            if (f.phones[0]) { $('dPhone').value = f.phones[0].replace(/^84/, '0'); }
+            $('dChat').value = text.trim().slice(0, 600);
+            currentSample = null;
+            go('deal');
+            showStep(1);
+            botReply('Đã điền vào Bước 1. Bạn bổ sung các ô còn thiếu rồi bấm <b>Kiểm tra rủi ro</b>.', null, 400);
+          }
+        });
+      }
+      chips.push({ label: 'Tôi nghi bị lừa', say: 'Tôi nghi bị lừa tiền' });
+
+      botAdd('bot', parts.join('<br><br>'));
+      botChips(chips);
+    }
+
+    function scanImage(file) {
+      if (!file) { return; }
+
+      if (file.type.indexOf('image/') !== 0) {
+        botAdd('bot', 'Mình chỉ quét được tệp ảnh thôi.');
+        return;
+      }
+      if (file.size > 6 * 1024 * 1024) {
+        botAdd('bot', 'Ảnh lớn quá (tối đa 6 MB). Bạn thử ảnh nhỏ hơn nhé.');
+        return;
+      }
+
+      var url = URL.createObjectURL(file);
+      botAdd('me', '<img src="' + url + '" alt="Ảnh đã gửi">');
+      botTyping(true);
+
+      loadImage(url).then(function (img) {
+        var info = { w: img.naturalWidth, h: img.naturalHeight, bits: imageHash(img) };
+
+        botAdd('bot', 'Đang đọc chữ trong ảnh, lần đầu có thể mất vài chục giây...');
+
+        return runOcr(file).then(
+          function (text) { return { info: info, text: text }; },
+          function () { return { info: info, text: '' }; }
+        );
+      }).then(function (r) {
+        botTyping(false);
+        describeScan(r.info, r.text);
+      }).catch(function () {
+        botTyping(false);
+        botAdd('bot', 'Mình không mở được ảnh này. Bạn thử ảnh khác nhé.');
+      });
+    }
+
+    /* ----- Khởi tạo trợ lý ----- */
+    function initBot() {
+      $('botMascot').innerHTML = mascotHtml();
+      $('botMini').innerHTML = '<img src="' + MASCOT.src + '" alt="Shieldy">';
+
+      function toggle(open) {
+        $('botPanel').hidden = !open;
+        $('botBubble').hidden = true;
+
+        if (open && !botOpened) {
+          botOpened = true;
+          botAdd('bot', 'Xin chào, mình là <b>Shieldy</b>! Mình giúp bạn dùng ShieldPay, tra cứu số tài khoản và quét ảnh chụp cuộc trò chuyện.');
+          botChips(null);
+        }
+      }
+
+      $('botLaunch').addEventListener('click', function () { toggle($('botPanel').hidden); });
+      $('botClose').addEventListener('click', function () { toggle(false); });
+
+      function send() {
+        var box = $('botText');
+        var text = box.value.trim();
+        if (!text) { return; }
+        box.value = '';
+        botAsk(text);
+      }
+
+      $('botSend').addEventListener('click', send);
+      $('botText').addEventListener('keydown', function (e) { if (e.key === 'Enter') { send(); } });
+
+      $('botFile').addEventListener('change', function (e) {
+        scanImage(e.target.files[0]);
+        e.target.value = '';
+      });
+
+      /* Lời chào nhỏ hiện sau vài giây, tự ẩn */
+      setTimeout(function () { if ($('botPanel').hidden) { $('botBubble').hidden = false; } }, 2500);
+      setTimeout(function () { $('botBubble').hidden = true; }, 11000);
+    }
+
+
+    /* ---------------------------------------------------------
+       SỰ KIỆN BẤM CHUNG
+       --------------------------------------------------------- */
+    document.addEventListener('click', function (e) {
+      /* Mọi phần tử có data-go sẽ chuyển trang */
+      var target = e.target.closest('[data-go]');
+      if (target) {
+        e.preventDefault();
+        go(target.dataset.go);
+      }
+
+      /* Nút Hiện / Ẩn mật khẩu */
+      var toggle = e.target.closest('[data-toggle]');
+      if (toggle) {
+        var input = $(toggle.dataset.toggle);
+        var show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        toggle.textContent = show ? 'Ẩn' : 'Hiện';
+      }
+    });
+
+
+    initDeal();
+    initBot();
+    updateAuthUI();
+  </script>
+
+</body>
+
+</html>
